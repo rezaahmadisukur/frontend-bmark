@@ -1,8 +1,8 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useMemo, useState } from "react";
 import { BOOKMARKS, COLLECTIONS } from "~/data/mockData";
-import { Bookmark, Collection, FilterState } from "~/types";
+import { Bookmark, Collection, FilterState, SortMode, ViewMode } from "~/types";
 
 interface AppContextType {
   // Data
@@ -11,9 +11,21 @@ interface AppContextType {
   // Filter state
   filters: FilterState;
   setFilters: React.Dispatch<React.SetStateAction<FilterState>>;
+  // View
+  viewMode: ViewMode;
+  setViewMode: (mode: ViewMode) => void;
+  sortMode: SortMode;
+  setSortMode: (mode: SortMode) => void;
   // Sidebar
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
+  // Modal
+  addModalOpen: boolean;
+  setAddModalOpen: (open: boolean) => void;
+  // Computed
+  filteredBookmarks: Bookmark[];
+  commandPaletteOpen: boolean;
+  setCommandPaletteOpen: (open: boolean) => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -21,8 +33,12 @@ const AppContext = createContext<AppContextType | null>(null);
 export const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const [bookmarks, setBookmarks] = useState<Bookmark[]>(BOOKMARKS);
   const [collections, setCollections] = useState<Collection[]>(COLLECTIONS);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [filters, setFilters] = useState({
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
+  const [sortMode, setSortMode] = useState<SortMode>("newest");
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(true);
+  const [addModalOpen, setAddModalOpen] = useState<boolean>(false);
+  const [commandPaletteOpen, setCommandPaletteOpen] = useState<boolean>(false);
+  const [filters, setFilters] = useState<FilterState>({
     collectionId: null,
     tag: null,
     search: "",
@@ -30,15 +46,75 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     showRecent: false
   });
 
+  // Computed filtered bookmarks
+  const filteredBookmarks = useMemo(() => {
+    let result = [...bookmarks];
+
+    // Filter by search
+    if (filters.search.trim()) {
+      const q = filters.search.toLowerCase();
+      result = result.filter(
+        (b) =>
+          b.title.toLowerCase().includes(q) ||
+          b.description.toLowerCase().includes(q) ||
+          b.tags.some((t) => t.toLowerCase().includes(q)) ||
+          b.url.toLowerCase().includes(q)
+      );
+    }
+
+    // Filter by favorites
+    if (filters.showFavorites) {
+      result = result.filter((b) => b.isFavorite);
+    }
+
+    // Filter by recent (last 7 days)
+    if (filters.showRecent) {
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      result = result.filter((b) => b.createdAt >= weekAgo);
+    }
+
+    // Filter by collection
+    if (filters.collectionId) {
+      result = result.filter((b) => b.collectionId === filters.collectionId);
+    }
+
+    // Filter by tag
+    if (filters.tag) {
+      result = result.filter((b) => b.tags.includes(filters.tag!));
+    }
+
+    // Sort
+    result.sort((a, b) => {
+      if (sortMode === "newest")
+        return b.createdAt.getTime() - a.createdAt.getTime();
+      if (sortMode === "oldest")
+        return a.createdAt.getTime() - b.createdAt.getTime();
+      if (sortMode === "az") return a.title.localeCompare(b.title);
+      return 0;
+    });
+
+    return result;
+  }, [bookmarks, filters, sortMode]);
+
   const ContextValue = {
     bookmarks,
     setBookmarks,
     collections,
     setCollections,
+    viewMode,
+    setViewMode,
+    sortMode,
+    setSortMode,
     sidebarOpen,
     setSidebarOpen,
+    addModalOpen,
+    setAddModalOpen,
     filters,
-    setFilters
+    setFilters,
+    commandPaletteOpen,
+    setCommandPaletteOpen,
+    filteredBookmarks
   };
 
   return (
