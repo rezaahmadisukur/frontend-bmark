@@ -193,7 +193,7 @@ const Sidebar = () => {
             </div>
             <div>
               <span className="text-sm font-bold tracking-tight text-white">
-                DevMark
+                B-Mark
               </span>
               <p className="text-[10px] text-zinc-500">Developer Bookmarks</p>
             </div>
@@ -262,11 +262,11 @@ const Sidebar = () => {
         <div className="border-t border-zinc-800/80 p-3">
           <div className="flex items-center gap-2.5 rounded-lg px-3 py-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-full bg-linear-to-br from-indigo-500 to-violet-600 text-xs font-bold text-white">
-              D
+              BM
             </div>
             <div>
               <p className="text-xs font-medium text-zinc-300">Dev User</p>
-              <p className="text-[10px] text-zinc-600">dev@devmark.app</p>
+              <p className="text-[10px] text-zinc-600">example@bmark.app</p>
             </div>
           </div>
         </div>
