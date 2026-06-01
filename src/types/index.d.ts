@@ -25,3 +25,6 @@ export interface FilterState {
   showFavorites: boolean;
   showRecent: boolean;
 }
+
+export type ViewMode = "grid" | "list";
+export type SortMode = "newest" | "oldest" | "az";
