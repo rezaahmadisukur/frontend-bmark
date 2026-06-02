@@ -1,4 +1,4 @@
-import { Sidebar, Topbar } from "~/components/partials";
+import { PageHeader, Sidebar, Topbar } from "~/components/partials";
 
 const BookmarkDashboard = () => {
   return (
@@ -10,6 +10,14 @@ const BookmarkDashboard = () => {
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Top bar */}
         <Topbar />
+
+        {/* Content Area */}
+        <div className="flex flex-1 flex-col overflow-y-auto">
+          {/* Page header */}
+          <PageHeader />
+          {/* Tag filter bar */}
+          {/* Bookmark grid list */}
+        </div>
       </div>
     </div>
   );
