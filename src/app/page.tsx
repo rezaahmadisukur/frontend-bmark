@@ -1,4 +1,4 @@
-import { PageHeader, Sidebar, Topbar } from "~/components/partials";
+import { PageHeader, Sidebar, TagFilter, Topbar } from "~/components/partials";
 
 const BookmarkDashboard = () => {
   return (
@@ -16,6 +16,7 @@ const BookmarkDashboard = () => {
           {/* Page header */}
           <PageHeader />
           {/* Tag filter bar */}
+          <TagFilter />
           {/* Bookmark grid list */}
         </div>
       </div>
