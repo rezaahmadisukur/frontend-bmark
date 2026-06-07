@@ -11,7 +11,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Activity, Fragment, useState } from "react";
+import { Activity, Fragment, useEffect, useState } from "react";
 import { useApp } from "~/context/AppContext";
 import { cn } from "~/lib/utils";
 import { Bookmark } from "~/types";
@@ -99,6 +99,7 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
   const [copied, setCopied] = useState<boolean>(false);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [deleteConfirm, setDeleteConfirm] = useState<boolean>(false);
+  const [timeAgo, setTimeAgo] = useState("");
 
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -133,15 +134,21 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
     }
   })();
 
-  const timeAgo = (() => {
-    const diff = Date.now() - bookmark.createdAt.getTime();
-    const days = Math.floor(diff / 86400000);
-    if (days === 0) return "Today";
-    if (days === 1) return "Yesterday";
-    if (days < 7) return `${days}d ago`;
-    if (days < 30) return `${Math.floor(days / 7)}w ago`;
-    return `${Math.floor(days / 30)}mo ago`;
-  })();
+  useEffect(() => {
+    const update = () => {
+      const diff = Date.now() - bookmark.createdAt.getTime();
+      const days = Math.floor(diff / 86400000);
+      if (days === 0) setTimeAgo("Today");
+      else if (days === 1) setTimeAgo("Yesterday");
+      else if (days < 7) setTimeAgo(`${days}d ago`);
+      else if (days < 30) setTimeAgo(`${Math.floor(days / 7)}w ago`);
+      else setTimeAgo(`${Math.floor(days / 30)}mo ago`);
+    };
+
+    update();
+    const interval = setInterval(update, 60_000); // update setiap menit
+    return () => clearInterval(interval);
+  }, [bookmark.createdAt]);
 
   // Grid View
   return (
