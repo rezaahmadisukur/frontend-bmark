@@ -29,6 +29,7 @@ interface AppContextType {
   addModalOpen: boolean;
   setAddModalOpen: (open: boolean) => void;
   // Actions
+  addBookmark: (bookmark: Bookmark) => void;
   toggleFavorite: (id: string) => void;
   deleteBookmark: (id: string) => void;
   // Computed
@@ -54,6 +55,10 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     showFavorites: false,
     showRecent: false
   });
+
+  const addBookmark = useCallback((bookmark: Bookmark) => {
+    setBookmarks((prev) => [bookmark, ...prev]);
+  }, []);
 
   const toggleFavorite = useCallback(
     (id: string) =>
@@ -138,7 +143,8 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     setCommandPaletteOpen,
     filteredBookmarks,
     toggleFavorite,
-    deleteBookmark
+    deleteBookmark,
+    addBookmark
   };
 
   return (
