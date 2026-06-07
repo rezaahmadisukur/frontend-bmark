@@ -64,7 +64,11 @@ const MainContent = () => {
       )}
     >
       {filteredBookmarks.map((bookmark, index) => (
-        <div key={bookmark.id}>
+        <div
+          key={bookmark.id}
+          className="animate-[fadeSlideUp_0.3s_ease_forwards] opacity-0"
+          style={{ animationDelay: `${Math.min(index * 40, 200)}ms` }}
+        >
           <BookmarkCard bookmark={bookmark} viewMode={viewMode} />
         </div>
       ))}
