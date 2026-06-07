@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useMemo, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useMemo,
+  useState
+} from "react";
 import { BOOKMARKS, COLLECTIONS } from "~/data/mockData";
 import { Bookmark, Collection, FilterState, SortMode, ViewMode } from "~/types";
 
@@ -22,6 +28,9 @@ interface AppContextType {
   // Modal
   addModalOpen: boolean;
   setAddModalOpen: (open: boolean) => void;
+  // Actions
+  toggleFavorite: (id: string) => void;
+  deleteBookmark: (id: string) => void;
   // Computed
   filteredBookmarks: Bookmark[];
   commandPaletteOpen: boolean;
@@ -45,6 +54,19 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     showFavorites: false,
     showRecent: false
   });
+
+  const toggleFavorite = useCallback(
+    (id: string) =>
+      setBookmarks((prev) =>
+        prev.map((b) => (b.id === id ? { ...b, isFavorite: !b.isFavorite } : b))
+      ),
+    []
+  );
+
+  const deleteBookmark = useCallback(
+    (id: string) => setBookmarks((prev) => prev.filter((b) => b.id !== id)),
+    []
+  );
 
   // Computed filtered bookmarks
   const filteredBookmarks = useMemo(() => {
@@ -114,7 +136,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
     setFilters,
     commandPaletteOpen,
     setCommandPaletteOpen,
-    filteredBookmarks
+    filteredBookmarks,
+    toggleFavorite,
+    deleteBookmark
   };
 
   return (
