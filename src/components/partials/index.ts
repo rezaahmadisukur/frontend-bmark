@@ -5,6 +5,7 @@ import TagFilter from "./TagFilter";
 import MainContent from "./MainContent";
 import EmptyState from "./EmptyState";
 import BookmarkCard from "./BookmarkCard";
+import AddBookmarkModal from "./AddBookmarkModal";
 
 export {
   Sidebar,
@@ -13,5 +14,6 @@ export {
   TagFilter,
   MainContent,
   EmptyState,
-  BookmarkCard
+  BookmarkCard,
+  AddBookmarkModal
 };
