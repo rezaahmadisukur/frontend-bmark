@@ -106,7 +106,7 @@ export const BOOKMARKS: Bookmark[] = [
     title: "Vite — Next Generation Frontend Tooling",
     description:
       "Get familiar with the new frontend build tool Vite. A fast and lean development server with instant HMR, rich features, and optimized production builds.",
-    image: "https://vitejs.dev/og-image.png",
+    image: "https://vite.dev/og.png",
     favicon: "https://vitejs.dev/logo.svg",
     tags: ["frontend", "bundler", "vite", "tooling"],
     collectionId: "col-1",
