@@ -6,6 +6,7 @@ import MainContent from "./MainContent";
 import EmptyState from "./EmptyState";
 import BookmarkCard from "./BookmarkCard";
 import AddBookmarkModal from "./AddBookmarkModal";
+import CommandPalette from "./CommandPalette";
 
 export {
   Sidebar,
@@ -15,5 +16,6 @@ export {
   MainContent,
   EmptyState,
   BookmarkCard,
-  AddBookmarkModal
+  AddBookmarkModal,
+  CommandPalette
 };
