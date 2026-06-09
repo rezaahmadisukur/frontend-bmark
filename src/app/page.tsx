@@ -1,5 +1,6 @@
 import {
   AddBookmarkModal,
+  CommandPalette,
   MainContent,
   PageHeader,
   Sidebar,
@@ -31,6 +32,7 @@ const BookmarkDashboard = () => {
 
       {/* Modals & Overlays */}
       <AddBookmarkModal />
+      <CommandPalette />
     </div>
   );
 };
