@@ -8,6 +8,7 @@ import {
   Loader2,
   X
 } from "lucide-react";
+import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useApp } from "~/context/AppContext";
 import { COLLECTIONS } from "~/data/mockData";
@@ -334,7 +335,9 @@ const AddBookmarkModal = () => {
               <div className="overflow-hidden rounded-xl border border-zinc-700/60 bg-zinc-800/50">
                 {metadata.image && (
                   <div className="relative h-36 bg-zinc-800">
-                    <img
+                    <Image
+                      width={144}
+                      height={144}
                       src={metadata.image}
                       alt=""
                       className="h-full w-full object-cover"
@@ -342,7 +345,7 @@ const AddBookmarkModal = () => {
                         (e.target as HTMLImageElement).style.display = "none";
                       }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/70 via-transparent to-transparent" />
+                    <div className="absolute inset-0 bg-linear-to-t from-zinc-900/70 via-transparent to-transparent" />
                   </div>
                 )}
                 <div className="p-4">
