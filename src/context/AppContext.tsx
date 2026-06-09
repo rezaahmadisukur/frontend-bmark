@@ -126,7 +126,6 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
   const ContextValue = {
     bookmarks,
-    setBookmarks,
     collections,
     setCollections,
     viewMode,
