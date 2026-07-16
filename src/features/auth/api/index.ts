@@ -1,4 +1,4 @@
-import api from "~/lib/axios";
+import { axiosInstance } from "~/lib/axios";
 
 export interface LoginResponse {
   accessToken: string;
@@ -26,11 +26,15 @@ export interface ProfileResponse {
 
 export const authApi = {
   register: (data: { email: string; password: string; name?: string }) =>
-    api.post<RegisterResponse>("/auth/register", data).then((req) => req.data),
+    axiosInstance
+      .post<RegisterResponse>("/auth/register", data)
+      .then((req) => req.data),
 
   login: (data: { email: string; password: string }) =>
-    api.post<LoginResponse>("/auth/login", data).then((req) => req.data),
+    axiosInstance
+      .post<LoginResponse>("/auth/login", data)
+      .then((req) => req.data),
 
   getProfile: () =>
-    api.get<ProfileResponse>("/auth/profile").then((req) => req.data)
+    axiosInstance.get<ProfileResponse>("/auth/profile").then((req) => req.data)
 };
