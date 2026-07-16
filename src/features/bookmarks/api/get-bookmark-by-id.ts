@@ -39,7 +39,7 @@ type UseGetBookmarkById = {
   input: GetBookmarkByIdInput;
 };
 
-export const useGetProductById = ({
+export const useGetBookmarkById = ({
   queryConfig,
   input
 }: UseGetBookmarkById) => {
