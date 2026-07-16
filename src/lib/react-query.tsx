@@ -14,7 +14,7 @@ export type ApiFnReturnType<
 
 export type QueryConfig<T extends (...args: never[]) => unknown> = Omit<
   ReturnType<T>,
-  "queryKey | queryFn"
+  "queryKey" | "queryFn"
 >;
 
 export type MutationConfig<
