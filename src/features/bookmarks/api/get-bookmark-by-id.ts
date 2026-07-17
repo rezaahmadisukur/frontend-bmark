@@ -1,17 +1,9 @@
 import { useQuery, queryOptions } from "@tanstack/react-query";
 import { QueryConfig } from "~/lib/react-query";
 import { axiosInstance } from "~/lib/axios";
+import { Bookmark } from "~/types/api";
 
-type GetBookmarkByIdResponse = {
-  id: string;
-  url: string;
-  title: string;
-  description: string | null;
-  favicon: string | null;
-  isFavorite: boolean;
-  createdAt: string;
-  updatedAt: string;
-};
+type GetBookmarkByIdResponse = Bookmark;
 
 type GetBookmarkByIdInput = {
   id: string;
