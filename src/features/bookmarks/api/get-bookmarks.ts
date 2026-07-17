@@ -1,17 +1,9 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import type { QueryConfig } from "~/lib/react-query";
 import { axiosInstance } from "~/lib/axios";
+import { Bookmark } from "~/types/api";
 
-type GetBookmarksResponse = {
-  id: string;
-  url: string;
-  title: string;
-  description: string | null;
-  favicon: string | null;
-  isFavorite: boolean;
-  createdAt: string;
-  updatedAt: string;
-}[];
+type GetBookmarksResponse = Bookmark[];
 
 export enum BookmarkSortBy {
   RECOMMENDED = "recommended"
