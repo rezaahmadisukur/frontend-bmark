@@ -1,7 +1,7 @@
 "use client";
 
 import { Tag, X } from "lucide-react";
-import { Activity } from "react";
+import { Activity } from "./Activity";
 import { useApp } from "~/context/AppContext";
 import { ALL_TAGS } from "~/data/mockData";
 import { cn } from "~/lib/utils";
