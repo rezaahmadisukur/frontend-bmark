@@ -11,8 +11,9 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Activity, Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useApp } from "~/context/AppContext";
+import { Activity } from "./Activity";
 import { cn } from "~/lib/utils";
 import { Bookmark } from "~/types";
 
