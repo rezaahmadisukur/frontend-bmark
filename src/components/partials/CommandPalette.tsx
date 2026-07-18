@@ -11,7 +11,8 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Activity, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Activity } from "./Activity";
 import { useApp } from "~/context/AppContext";
 import { ALL_TAGS } from "~/data/mockData";
 import { cn } from "~/lib/utils";
