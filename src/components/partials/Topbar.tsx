@@ -10,10 +10,11 @@ import {
   Search,
   SlidersHorizontal
 } from "lucide-react";
-import { Activity, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useApp } from "~/context/AppContext";
 import { cn } from "~/lib/utils";
 import { SortMode } from "~/types";
+import { Activity } from "./Activity";
 
 const SORT_OPTIONS: { label: string; value: SortMode }[] = [
   { label: "Newest first", value: "newest" },
@@ -32,7 +33,7 @@ function SortDropdown() {
         setOpen(false);
     }
     document.addEventListener("mousedown", handleClick);
-    return () => document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
   const currentLabel =
