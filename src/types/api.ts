@@ -1,3 +1,12 @@
+export type Login = {
+  accessToken: string;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+  };
+};
+
 export type Bookmark = {
   id: string;
   url: string;
