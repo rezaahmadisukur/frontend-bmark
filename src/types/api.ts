@@ -1,4 +1,4 @@
-export type Login = {
+export type Authentication = {
   accessToken: string;
   user: {
     id: string;
@@ -6,6 +6,12 @@ export type Login = {
     name: string;
   };
 };
+
+export interface Profile {
+  id: string;
+  email: string;
+  name: string;
+}
 
 export type Bookmark = {
   id: string;
