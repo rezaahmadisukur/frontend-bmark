@@ -10,9 +10,10 @@ import { type LoginFormData, loginSchema, useLogin } from "../api/login";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "~/components/ui/input";
-import { Bookmark } from "lucide-react";
+import { Bookmark, Loader2 } from "lucide-react";
 import { Activity } from "~/components/partials/Activity";
-import { Button } from "~/components/ui/button";
+import Link from "next/link";
+import { Button } from "~/components/custom/button";
 
 const LoginPage = () => {
   const loginMutation = useLogin();
@@ -48,7 +49,7 @@ const LoginPage = () => {
                 <Input
                   type="email"
                   id={field.name}
-                  placeholder="johndoe@example.go"
+                  placeholder="johndoe@example.com"
                   aria-invalid={fieldState.invalid}
                   {...field}
                 />
@@ -80,12 +81,33 @@ const LoginPage = () => {
             )}
           />
           <Field>
-            <Button type="submit" className="cursor-pointer">
-              Sign In
+            <Button
+              type="submit"
+              className="w-full bg-indigo-600 text-white hover:bg-indigo-500 cursor-pointer"
+              disabled={loginMutation.isPending}
+            >
+              <Activity mode={loginMutation.isPending ? "visible" : "hidden"}>
+                <Loader2 size={16} className="animate-spin" />
+                Signing in...
+              </Activity>
+              <Activity mode={!loginMutation.isPending ? "visible" : "hidden"}>
+                Sign In
+              </Activity>
             </Button>
           </Field>
         </FieldGroup>
       </form>
+
+      {/* Link to register */}
+      <p className="text-center text-sm text-zinc-600">
+        Don&apos;t have an account?{" "}
+        <Link
+          href="/register"
+          className="font-medium text-indigo-400 hover:text-indigo-300"
+        >
+          Create one
+        </Link>
+      </p>
     </div>
   );
 };
