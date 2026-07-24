@@ -10,7 +10,7 @@ export const registerSchema = z.object({
   name: z.string().min(1, "Name is required")
 });
 
-type RegisterFormData = z.infer<typeof registerSchema>;
+export type RegisterFormData = z.infer<typeof registerSchema>;
 type RegisterResponse = Authentication;
 
 export const register = async ({
