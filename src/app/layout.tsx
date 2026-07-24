@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "~/lib/utils";
 import { AppProvider } from "~/context/AppContext";
+import { QueryProvider } from "~/lib/query-provider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -39,7 +40,9 @@ export default function RootLayout({
       )}
     >
       <body>
-        <AppProvider>{children}</AppProvider>
+        <QueryProvider>
+          <AppProvider>{children}</AppProvider>
+        </QueryProvider>
       </body>
     </html>
   );
