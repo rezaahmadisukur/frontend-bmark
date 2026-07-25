@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "~/lib/utils";
 import { AppProvider } from "~/context/AppContext";
 import { QueryProvider } from "~/lib/query-provider";
+import { ThemeProvider } from "~/lib/theme-provider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -32,7 +33,6 @@ export default function RootLayout({
       lang="en"
       className={cn(
         "antialiased",
-        "dark",
         geistSans.variable,
         geistMono.variable,
         "font-sans",
@@ -40,9 +40,11 @@ export default function RootLayout({
       )}
     >
       <body>
-        <QueryProvider>
-          <AppProvider>{children}</AppProvider>
-        </QueryProvider>
+        <ThemeProvider>
+          <QueryProvider>
+            <AppProvider>{children}</AppProvider>
+          </QueryProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
