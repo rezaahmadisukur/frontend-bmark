@@ -12,7 +12,7 @@ import {
 } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
 import { Activity } from "~/components/partials/Activity";
-import { Button } from "~/components/ui/button";
+import { Button } from "~/components/custom/button";
 import Link from "next/link";
 
 const RegisterPage = () => {
