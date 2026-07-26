@@ -3,7 +3,7 @@
 import { Controller, useForm } from "react-hook-form";
 import { RegisterFormData, registerSchema, useRegister } from "../api/register";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Bookmark, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import {
   Field,
   FieldError,
@@ -28,11 +28,10 @@ const RegisterPage = () => {
     <div className="space-y-6">
       {/* Logo & Title */}
       <div className="flex flex-col items-center gap-2">
-        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-br from-indigo-500 to-violet-600 shadow-lg shadow-indigo-900/50">
-          <Bookmark size={20} className="text-white" />
-        </div>
-        <h1 className="text-xl font-bold text-white">Create Account</h1>
-        <p className="text-sm text-zinc-500">Start your B-Mark journey</p>
+        <h1 className="text-xl font-bold text-foreground">Create Account</h1>
+        <p className="text-sm text-muted-foreground">
+          Start your B-Mark journey
+        </p>
       </div>
 
       {/* Form */}
@@ -103,7 +102,7 @@ const RegisterPage = () => {
           <Field>
             <Button
               type="submit"
-              className="w-full bg-indigo-600 text-white hover:bg-indigo-500 cursor-pointer"
+              className="w-full bg-primary text-primary-foreground cursor-pointer"
               disabled={registerMutation.isPending}
             >
               <Activity
@@ -123,11 +122,11 @@ const RegisterPage = () => {
       </form>
 
       {/* Link to login */}
-      <p className="text-center text-sm text-zinc-600">
+      <p className="text-center text-sm text-muted-foreground">
         Already have an account?{" "}
         <Link
           href="/login"
-          className="font-medium text-indigo-400 hover:text-indigo-300"
+          className="font-medium text-accent hover:text-accent/80"
         >
           Sign in
         </Link>
