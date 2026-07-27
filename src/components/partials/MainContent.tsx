@@ -2,9 +2,9 @@
 
 import { useEffect, useRef } from "react";
 import { useApp } from "~/context/AppContext";
-import EmptyState from "./EmptyState";
+import EmptyState from "../../features/bookmarks/components/EmptyState";
 import { cn } from "~/lib/utils";
-import BookmarkCard from "./BookmarkCard";
+import BookmarkCard from "../../features/bookmarks/components/BookmarkCard";
 
 function getEmtpyStateType(
   filters: ReturnType<typeof useApp>["filters"],
