@@ -17,10 +17,13 @@ export type Bookmark = {
   id: string;
   url: string;
   title: string;
-  description: string | null;
+  description: string;
+  image: string;
+  favicon: string;
+  tags: string[];
+  collectionId: string;
+  createdAt: Date;
   isFavorite: boolean;
-  createdAt: string;
-  updatedAt: string;
 };
 
 export type Collection = {
