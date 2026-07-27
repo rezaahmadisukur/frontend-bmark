@@ -13,10 +13,10 @@ export function Button({ className, ...props }: ButtonProps) {
     <ShadcnButton
       className={cn(
         "shadow-[0_5px_0_hsl(var(--primary-pressed))]",
-        "hover:brightness-105",
+        "hover:brightness-105 hover:bg-primary",
         "active:shadow-none active:translate-y-1.25",
         "transition-all duration-100",
-        "border-none hover:bg-primary hover:ring-0",
+        "border-none ring-0",
         className
       )}
       {...props}
