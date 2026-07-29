@@ -31,7 +31,7 @@ function TagPill({ tag }: { tag: string }) {
         e.stopPropagation();
         setFilters((f) => ({ ...f, tag }));
       }}
-      className="rounded-md bg-zinc-800/80 px-2 py-0.5 text-[10px] font-medium text-zinc-400 transition-colors hover:bg-indigo-500/20 hover:text-indigo-400"
+      className="rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground transition-colors hover:bg-primary/20 hover:text-primary"
     >
       #{tag}
     </button>
@@ -42,8 +42,8 @@ function FaviconImage({ src, alt }: { src: string; alt: string }) {
   const [error, setError] = useState<boolean>(false);
   if (error) {
     return (
-      <div className="w-5 h-5 flex items-center justify-center rounded-sm bg-zinc-700">
-        <Globe size={11} className="text-zinc-500" />
+      <div className="w-5 h-5 flex items-center justify-center rounded-sm bg-muted">
+        <Globe size={11} className="text-muted-foreground" />
       </div>
     );
   }
@@ -66,8 +66,8 @@ function OGImage({ src, alt }: { src: string; alt: string }) {
 
   if (error) {
     return (
-      <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-zinc-800 to-zinc-900">
-        <Globe size={32} className="text-zinc-700" />
+      <div className="flex h-full w-full items-center justify-center bg-linear-to-br from-muted to-card">
+        <Globe size={32} className="text-muted-foreground/70" />
       </div>
     );
   }
@@ -75,7 +75,7 @@ function OGImage({ src, alt }: { src: string; alt: string }) {
   return (
     <>
       <Activity mode={!loaded ? "visible" : "hidden"}>
-        <div className="absolute inset-0 animate-pulse bg-linear-to-r from-zinc-800 via-zinc-750 to-zinc-800" />
+        <div className="absolute inset-0 animate-pulse bg-linear-to-r  from-muted via-muted to-muted" />
       </Activity>
 
       <Image
@@ -155,7 +155,7 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
   return (
     <Fragment>
       <Activity mode={viewMode === "list" ? "visible" : "hidden"}>
-        <div className="group relative flex items-center gap-4 rounded-xl border border-zinc-800/70 bg-zinc-900/80 p-4 transition-all duration-200 hover:border-zinc-700/70 hover:bg-zinc-800/60 hover:shadow-lg hover:shadow-black/20">
+        <div className="group relative flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition-all duration-200 hover:border-primary/50 hover:bg-muted/60 hover:shadow-lg hover:shadow-black/20">
           {/* Favicon */}
           <div className="shrink-0">
             <FaviconImage src={bookmark.favicon || ""} alt={bookmark.title} />
@@ -168,7 +168,7 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
                 href={bookmark.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="truncate text-sm font-semibold text-zinc-100 transition-colors hover:text-indigo-400"
+                className="truncate text-sm font-semibold text-card-foreground transition-colors hover:text-primary"
               >
                 {bookmark.title}
               </Link>
@@ -179,7 +179,7 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
                 />
               )}
             </div>
-            <p className="mt-0.5 truncate text-xs text-zinc-500">
+            <p className="mt-0.5 truncate text-xs text-muted-foreground">
               {bookmark.description}
             </p>
           </div>
@@ -193,8 +193,10 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
 
           {/* Domain + time */}
           <div className="hidden shrink-0 flex-col items-end gap-1 sm:flex">
-            <span className="text-[10px] text-zinc-600">{domain}</span>
-            <span className="text-[10px] text-zinc-700">{timeAgo}</span>
+            <span className="text-[10px] text-muted-foreground">{domain}</span>
+            <span className="text-[10px] text-muted-foreground/70">
+              {timeAgo}
+            </span>
           </div>
 
           {/* Actions */}
@@ -202,10 +204,10 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
             <button
               onClick={handleCopy}
               title="Copy link"
-              className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-800 text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-white"
+              className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
             >
               {copied ? (
-                <Check size={12} className="text-emerald-400" />
+                <Check size={12} className="text-primary" />
               ) : (
                 <Copy size={12} />
               )}
@@ -214,7 +216,7 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
               href={bookmark.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-800 text-zinc-400 transition-colors hover:bg-zinc-700 hover:text-white"
+              className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
             >
               <ExternalLink size={12} />
             </Link>
@@ -222,10 +224,10 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
               onClick={handleFavorite}
               title={bookmark.isFavorite ? "Unfavorite" : "Favorite"}
               className={cn(
-                "flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-800 transition-colors hover:bg-zinc-700",
+                "flex h-7 w-7 items-center justify-center rounded-lg bg-muted transition-colors hover:bg-accent",
                 bookmark.isFavorite
                   ? "text-amber-400"
-                  : "text-zinc-400 hover:text-amber-400"
+                  : "text-muted-foreground hover:text-amber-400"
               )}
             >
               <Star
@@ -237,10 +239,10 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
               onClick={handleDelete}
               title={deleteConfirm ? "Click again to confirm" : "Delete"}
               className={cn(
-                "flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-800 transition-colors hover:bg-zinc-700",
+                "flex h-7 w-7 items-center justify-center rounded-lg bg-muted transition-colors hover:bg-accent",
                 deleteConfirm
-                  ? "text-red-400"
-                  : "text-zinc-400 hover:text-red-400"
+                  ? "text-destructive"
+                  : "text-muted-foreground hover:text-destructive"
               )}
             >
               <Trash2 size={12} />
@@ -250,22 +252,22 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
       </Activity>
 
       <Activity mode={viewMode === "grid" ? "visible" : "hidden"}>
-        <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-zinc-800/70 bg-zinc-900/80 transition-all duration-300 hover:-translate-y-0.5 hover:border-zinc-700/70 hover:shadow-2xl hover:shadow-black/40">
+        <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-2xl hover:shadow-black/40">
           {/* OG Image */}
-          <div className="relative h-40 overflow-hidden bg-zinc-800">
+          <div className="relative h-40 overflow-hidden bg-muted">
             <OGImage src={bookmark.image || ""} alt={bookmark.title} />
             {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-linear-to-t from-zinc-900/80 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-linear-to-t from-card/80 via-transparent to-transparent" />
 
             {/* Top actions overlay */}
             <div className="absolute right-2 top-2 flex items-center gap-1.5 opacity-0 transition-all duration-200 group-hover:opacity-100">
               <button
                 onClick={handleCopy}
                 title="Copy link"
-                className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-900/90 text-zinc-400 backdrop-blur-sm transition-colors hover:bg-zinc-800 hover:text-white"
+                className="flex h-7 w-7 items-center justify-center rounded-lg bg-background/90 text-muted-foreground backdrop-blur-sm transition-colors hover:bg-accent hover:text-accent-foreground"
               >
                 {copied ? (
-                  <Check size={12} className="text-emerald-400" />
+                  <Check size={12} className="text-primary" />
                 ) : (
                   <Copy size={12} />
                 )}
@@ -275,7 +277,7 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-900/90 text-zinc-400 backdrop-blur-sm transition-colors hover:bg-zinc-800 hover:text-white"
+                className="flex h-7 w-7 items-center justify-center rounded-lg bg-background/90 text-muted-foreground backdrop-blur-sm transition-colors hover:bg-accent hover:text-accent-foreground"
               >
                 <ExternalLink size={12} />
               </Link>
@@ -284,7 +286,7 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
                   e.stopPropagation();
                   setMenuOpen((o) => !o);
                 }}
-                className="flex h-7 w-7 items-center justify-center rounded-lg bg-zinc-900/90 text-zinc-400 backdrop-blur-sm transition-colors hover:bg-zinc-800 hover:text-white"
+                className="flex h-7 w-7 items-center justify-center rounded-lg bg-background/90 text-muted-foreground backdrop-blur-sm transition-colors hover:bg-accent hover:text-accent-foreground"
               >
                 <MoreHorizontal size={12} />
               </button>
@@ -293,7 +295,7 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
             {/* Dropdown menu */}
             {menuOpen && (
               <div
-                className="absolute right-2 top-10 z-50 min-w-35 overflow-hidden rounded-xl border border-zinc-700/60 bg-zinc-800 shadow-2xl shadow-black/50"
+                className="absolute right-2 top-10 z-50 min-w-35 overflow-hidden rounded-xl border border-border bg-popover shadow-2xl shadow-black/50"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="p-1">
@@ -302,7 +304,7 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
                       handleFavorite(e);
                       setMenuOpen(false);
                     }}
-                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs text-zinc-300 hover:bg-zinc-700"
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs text-popover-foreground hover:bg-accent"
                   >
                     <Star
                       size={12}
@@ -320,8 +322,10 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
                       setMenuOpen(false);
                     }}
                     className={cn(
-                      "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs hover:bg-zinc-700",
-                      deleteConfirm ? "text-red-400" : "text-zinc-300"
+                      "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs hover:bg-accent",
+                      deleteConfirm
+                        ? "text-destructive"
+                        : "text-popover-foreground"
                     )}
                   >
                     <Trash2 size={12} />
@@ -333,7 +337,7 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
 
             {/* Favorite badge */}
             {bookmark.isFavorite && (
-              <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-amber-500/20 px-2 py-0.5 backdrop-blur-sm">
+              <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-accent/20 px-2 py-0.5 backdrop-blur-sm">
                 <Star size={10} className="fill-amber-400 text-amber-400" />
                 <span className="text-[10px] font-medium text-amber-300">
                   Favorite
@@ -347,10 +351,10 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
             {/* Domain row */}
             <div className="mb-2.5 flex items-center gap-2">
               <FaviconImage src={bookmark.favicon || ""} alt={bookmark.title} />
-              <span className="truncate text-[11px] text-zinc-600">
+              <span className="truncate text-[11px] text-muted-foreground">
                 {domain}
               </span>
-              <span className="ml-auto shrink-0 text-[10px] text-zinc-700">
+              <span className="ml-auto shrink-0 text-[10px] text-muted-foreground/70">
                 {timeAgo}
               </span>
             </div>
@@ -360,13 +364,13 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
               href={bookmark.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="mb-1.5 line-clamp-2 text-sm font-semibold leading-snug text-zinc-100 transition-colors hover:text-indigo-400"
+              className="mb-1.5 line-clamp-2 text-sm font-semibold leading-snug text-card-foreground transition-colors hover:text-primary"
             >
               {bookmark.title}
             </Link>
 
             {/* Description */}
-            <p className="mb-3 line-clamp-2 flex-1 text-xs leading-relaxed text-zinc-500">
+            <p className="mb-3 line-clamp-2 flex-1 text-xs leading-relaxed text-muted-foreground">
               {bookmark.description}
             </p>
 
@@ -376,7 +380,7 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
                 <TagPill key={tag} tag={tag} />
               ))}
               {bookmark.tags?.length > 4 && (
-                <span className="rounded-md bg-zinc-800/80 px-2 py-0.5 text-[10px] text-zinc-600">
+                <span className="rounded-md bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
                   +{(bookmark.tags?.length ?? 0) - 4}
                 </span>
               )}
