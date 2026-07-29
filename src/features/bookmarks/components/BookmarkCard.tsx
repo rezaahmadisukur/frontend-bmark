@@ -75,7 +75,7 @@ function OGImage({ src, alt }: { src: string; alt: string }) {
   return (
     <>
       <Activity mode={!loaded ? "visible" : "hidden"}>
-        <div className="absolute inset-0 animate-pulse bg-linear-to-r  from-muted via-muted to-muted" />
+        <div className="absolute inset-0 animate-pulse bg-linear-to-r from-muted via-muted to-muted" />
       </Activity>
 
       <Image
