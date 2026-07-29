@@ -1,14 +1,19 @@
+"use client";
+
+import { useState } from "react";
 import {
-  AddBookmarkModal,
   CommandPalette,
   PageHeader,
   Sidebar,
   TagFilter,
   Topbar
 } from "~/components/partials";
+import { useApp } from "~/context/AppContext";
+import AddBookmarkModal from "~/features/bookmarks/components/AddBookmarkModal";
 import MainContent from "~/features/bookmarks/components/MainContent";
 
 const Dashboard = () => {
+  const { addModalOpen, setAddModalOpen } = useApp();
   return (
     <div className="flex h-screen overflow-hidden bg-background">
       {/* Sidebar */}
@@ -31,7 +36,10 @@ const Dashboard = () => {
       </div>
 
       {/* Modals & Overlays */}
-      <AddBookmarkModal />
+      <AddBookmarkModal
+        isOpen={addModalOpen}
+        onClose={() => setAddModalOpen(false)}
+      />
       <CommandPalette />
     </div>
   );
