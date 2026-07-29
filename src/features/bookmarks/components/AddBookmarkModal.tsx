@@ -6,8 +6,7 @@ import {
   createBookmarkInputSchema,
   useCreateBookmark
 } from "../api/create-bookmark";
-import { Globe, Link2, Loader2, X } from "lucide-react";
-import { useState } from "react";
+import { Link2, Loader2, X } from "lucide-react";
 import {
   Field,
   FieldGroup,
@@ -19,6 +18,15 @@ import { Button } from "~/components/custom/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 import { Activity } from "~/components/partials/Activity";
+import { Textarea } from "~/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "~/components/ui/select";
 
 type AddBookmarkModalProps = {
   isOpen: boolean;
@@ -32,15 +40,16 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
     resolver: zodResolver(createBookmarkInputSchema)
   });
 
-  // const [url, setUrl] = useState("");
-  // const [title, setTitle] = useState("");
-  // const [description, setDescription] = useState("");
-  // const [collectionId, setCollectionId] = useState("");
-  // const [tags, setTags] = useState<string[]>([]);
-  // const [tagInput, setTagInput] = useState("");
-
-  const onSubmit = () => {
-    console.log("OK");
+  const onSubmit = (data: CreateBookmarkInput) => {
+    createBookmark.mutate(
+      { data },
+      {
+        onSuccess: () => {
+          form.reset();
+          onClose();
+        }
+      }
+    );
   };
 
   if (!isOpen) return null;
@@ -48,23 +57,27 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/70 backdrop-blue-md" />
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
 
       {/* Modal */}
-      <div className="relative z-10 w-full max-w-lg overflow-hidden rounded-2xl border border-zinc-700/60 bg-zinc-900 shadow-2xl shadow-black/60">
+      <div className="relative z-10 w-full max-w-lg overflow-hidden rounded-2xl border border-border bg-background shadow-2xl shadow-black/60">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-zinc-800/80 px-5 py-4">
           <div className="flex items-center gap-2.5">
             <div className="flex justify-center items-center w-7 h-7 rounded-lg bg-primary/20">
               <Link2 size={14} className="text-primary" />
             </div>
-            <h2 className="text-sm font-semibold text-white">
+            <h2 className="text-sm font-semibold text-foreground">
               Add New Bookmark
             </h2>
           </div>
-          <button className="flex h-7 w-7 items-center justify-center rounded-lg text-zinc-500 transition-colors hover:bg-zinc-800 hover:text-zinc-300">
+          <Button
+            type="button"
+            onClick={onClose}
+            className="flex h-7 w-7 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+          >
             <X size={15} />
-          </button>
+          </Button>
         </div>
 
         {/* Body */}
@@ -114,6 +127,81 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
                   </Field>
                 )}
               />
+
+              {/* Description Input */}
+              <Controller
+                name="description"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Description</FieldLabel>
+                    <Textarea
+                      id={field.name}
+                      placeholder="A fantastic resource for developers..."
+                      rows={2}
+                      {...field}
+                    />
+                    <Activity mode={fieldState.invalid ? "visible" : "hidden"}>
+                      <FieldError errors={[fieldState.error]} />
+                    </Activity>
+                  </Field>
+                )}
+              />
+
+              {/* Collection Picker */}
+              <Controller
+                name="collectionId"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Collection</FieldLabel>
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a collection" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {collections?.map((col) => (
+                            <SelectItem key={col.id} value={col.id}>
+                              {col.name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+
+                    <Activity mode={fieldState.invalid ? "visible" : "hidden"}>
+                      <FieldError errors={[fieldState.error]} />
+                    </Activity>
+                  </Field>
+                )}
+              />
+
+              {/* Tags Input */}
+              <Field>
+                <FieldLabel>Tags (optional)</FieldLabel>
+                <Input type="text" placeholder="react, typescript, nextjs" />
+                <p className="mt-1 text-[11px] text-muted-foreground/70">
+                  Separate tags with commas
+                </p>
+              </Field>
+
+              {/* Footer */}
+              <div className="flex items-center justify-end gap-2 pt-4">
+                <Button type="button" variant="outline" onClick={onClose}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={createBookmark.isPending}>
+                  {createBookmark.isPending ? (
+                    <>
+                      <Loader2 size={13} className="animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    "Save Bookmark"
+                  )}
+                </Button>
+              </div>
             </FieldGroup>
           </form>
         </div>
