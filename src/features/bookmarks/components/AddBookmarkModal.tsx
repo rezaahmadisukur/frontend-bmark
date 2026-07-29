@@ -6,7 +6,14 @@ import {
   createBookmarkInputSchema,
   useCreateBookmark
 } from "../api/create-bookmark";
-import { Globe, Link2, Loader2, X } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle2,
+  Globe,
+  Link2,
+  Loader2,
+  X
+} from "lucide-react";
 import {
   Field,
   FieldGroup,
@@ -29,6 +36,7 @@ import {
 } from "~/components/ui/select";
 import { Bookmark } from "~/types/api";
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 
 type AddBookmarkModalProps = {
   isOpen: boolean;
@@ -128,9 +136,9 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
   });
   const [fetchState, setFetchState] = useState<FetchState>("idle");
   const [metadata, setMetadata] = useState<Partial<Bookmark> | null>(null);
-  const [customTags, setCustomTags] = useState("");
+  // const [customTags, setCustomTags] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-  const [tagInput, setTagInput] = useState("");
+  // const [tagInput, setTagInput] = useState("");
 
   // Auto focus input when Modal opened
   useEffect(() => {
@@ -154,20 +162,11 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
     setFetchState("loading");
     setMetadata(null);
     try {
-      // Mock fetch - change with Real API
-      await new Promise((r) => setTimeout(r, 1500));
-      const domain = new URL(urlValue).hostname;
-      setMetadata({
-        title: domain.includes("github")
-          ? "Github Repository"
-          : `${domain} - Developer Resource`,
-        description: "A fantanstic resource for developer",
-        image:
-          "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&q=80",
-        tags: domain.includes("github")
-          ? ["git", "open-source"]
-          : ["developer", "learning"]
-      });
+      const data = await fetchMockMetadata(urlValue);
+      setMetadata(data);
+      // Auto-fill title & description to form
+      if (data.title) form.setValue("title", data.title);
+      if (data.description) form.setValue("description", data.description);
       setFetchState("success");
     } catch {
       setFetchState("error");
@@ -237,6 +236,7 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
                           placeholder="https://example.com/article"
                           aria-invalid={fieldState.invalid}
                           {...field}
+                          ref={inputRef}
                         />
                       </div>
                       <Button
@@ -257,6 +257,73 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
                   </Field>
                 )}
               />
+
+              {/* Loading Skeleton */}
+              {fetchState === "loading" && (
+                <div>
+                  <p className="mb-2 flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <Loader2 size={11} className="animate-spin text-primary" />
+                    Fetching metadata from URL...
+                  </p>
+                  <LoadingSkeleton />
+                </div>
+              )}
+
+              {/* Error State */}
+              {fetchState === "error" && (
+                <div className="flex items-center gap-2.5 rounded-xl border border-destructive/20 bg-destructive/10 px-4 py-3">
+                  <AlertCircle
+                    size={16}
+                    className="shrink-0 text-destructive"
+                  />
+                  <div>
+                    <p className="text-xs font-medium text-destructive">
+                      Failed to fetch metadata
+                    </p>
+                    <p className="text-[11px] text-destructive/70">
+                      Check the URL and try again.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Success - Preview Card */}
+              {fetchState === "success" && metadata && (
+                <>
+                  <div className="flex items-center gap-1.5 text-xs text-primary">
+                    <CheckCircle2 size={13} />
+                    <span>Metadata retrieved successfully</span>
+                  </div>
+
+                  {/* Preview Card */}
+                  <div className="overflow-hidden rounded-xl border border-border bg-muted">
+                    {metadata.image && (
+                      <div className="relative h-36 bg-muted">
+                        <Image
+                          width={144}
+                          height={144}
+                          src={metadata.image}
+                          alt=""
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display =
+                              "none";
+                          }}
+                        />
+                        <div className="absolute inset-0 bg-linear-to-t from-background/70 via-transparent to-transparent" />
+                      </div>
+                    )}
+                    <div className="p-4">
+                      <p className="mb-1 text-sm font-semibold text-foreground">
+                        {metadata.title}
+                      </p>
+                      <div className="text-xs text-muted-foreground">
+                        {metadata.description}
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
 
               {/* Title Input */}
               <Controller
@@ -333,6 +400,19 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
               {/* Tags Input */}
               <Field>
                 <FieldLabel>Tags (optional)</FieldLabel>
+                {/* Suggested tags from metadata */}
+                {fetchState === "success" && metadata?.tags && (
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    {metadata.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-md bg-primary/20 px-2 py-0.5 text-[11px] font-medium text-primary"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
                 <Input type="text" placeholder="react, typescript, nextjs" />
                 <p className="mt-1 text-[11px] text-muted-foreground/70">
                   Separate tags with commas
