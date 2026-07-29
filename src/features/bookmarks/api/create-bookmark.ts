@@ -9,7 +9,8 @@ export const createBookmarkInputSchema = z.object({
   url: z.string().min(1, "URL is required").url("Must be a valid URL"),
   title: z.string().optional(),
   description: z.string().optional(),
-  collectionId: z.string().optional()
+  collectionId: z.string().optional(),
+  tagsId: z.string().optional()
 });
 
 export type CreateBookmarkInput = z.infer<typeof createBookmarkInputSchema>;
