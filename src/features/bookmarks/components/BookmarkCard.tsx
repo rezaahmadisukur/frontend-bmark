@@ -137,7 +137,7 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
 
   useEffect(() => {
     const update = () => {
-      const diff = Date.now() - bookmark.createdAt.getTime();
+      const diff = Date.now() - new Date(bookmark.createdAt).getTime();
       const days = Math.floor(diff / 86400000);
       if (days === 0) setTimeAgo("Today");
       else if (days === 1) setTimeAgo("Yesterday");
@@ -158,7 +158,7 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
         <div className="group relative flex items-center gap-4 rounded-xl border border-zinc-800/70 bg-zinc-900/80 p-4 transition-all duration-200 hover:border-zinc-700/70 hover:bg-zinc-800/60 hover:shadow-lg hover:shadow-black/20">
           {/* Favicon */}
           <div className="shrink-0">
-            <FaviconImage src={bookmark.favicon} alt={bookmark.title} />
+            <FaviconImage src={bookmark.favicon || ""} alt={bookmark.title} />
           </div>
 
           {/* Content */}
@@ -186,7 +186,7 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
 
           {/* Tags - hidden on mobile */}
           <div className="hidden shrink-0 items-center gap-1 lg:flex">
-            {bookmark.tags.slice(0, 2).map((tag) => (
+            {bookmark.tags?.slice(0, 2).map((tag) => (
               <TagPill key={tag} tag={tag} />
             ))}
           </div>
@@ -253,7 +253,7 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
         <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-zinc-800/70 bg-zinc-900/80 transition-all duration-300 hover:-translate-y-0.5 hover:border-zinc-700/70 hover:shadow-2xl hover:shadow-black/40">
           {/* OG Image */}
           <div className="relative h-40 overflow-hidden bg-zinc-800">
-            <OGImage src={bookmark.image} alt={bookmark.title} />
+            <OGImage src={bookmark.image || ""} alt={bookmark.title} />
             {/* Gradient overlay */}
             <div className="absolute inset-0 bg-linear-to-t from-zinc-900/80 via-transparent to-transparent" />
 
@@ -346,7 +346,7 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
           <div className="flex flex-1 flex-col p-4">
             {/* Domain row */}
             <div className="mb-2.5 flex items-center gap-2">
-              <FaviconImage src={bookmark.favicon} alt={bookmark.title} />
+              <FaviconImage src={bookmark.favicon || ""} alt={bookmark.title} />
               <span className="truncate text-[11px] text-zinc-600">
                 {domain}
               </span>
@@ -372,12 +372,12 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
 
             {/* Tags */}
             <div className="flex flex-wrap gap-1">
-              {bookmark.tags.slice(0, 4).map((tag) => (
+              {bookmark.tags?.slice(0, 4).map((tag) => (
                 <TagPill key={tag} tag={tag} />
               ))}
-              {bookmark.tags.length > 4 && (
+              {bookmark.tags?.length > 4 && (
                 <span className="rounded-md bg-zinc-800/80 px-2 py-0.5 text-[10px] text-zinc-600">
-                  +{bookmark.tags.length - 4}
+                  +{(bookmark.tags?.length ?? 0) - 4}
                 </span>
               )}
             </div>
