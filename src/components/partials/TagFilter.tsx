@@ -5,9 +5,11 @@ import { Activity } from "./Activity";
 import { useApp } from "~/context/AppContext";
 import { ALL_TAGS } from "~/data/mockData";
 import { cn } from "~/lib/utils";
+import { useBookmarkFilters } from "~/features/bookmarks/hooks/use-bookmark-filters";
 
 const TagFilter = () => {
-  const { filters, setFilters, bookmarks } = useApp();
+  const { bookmarks } = useApp();
+  const { filters, setFilters } = useBookmarkFilters();
 
   // Count bookmark per tag
   const tagCounts = ALL_TAGS.reduce<Record<string, number>>((acc, tag) => {
