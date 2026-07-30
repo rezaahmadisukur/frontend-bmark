@@ -193,7 +193,7 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
       <div className="absolute inset-0 bg-black/70 backdrop-blur-md" />
 
       {/* Modal */}
-      <div className="relative z-10 w-full max-w-lg max-h-[90vh] overflow-y-auto scrollbar-none rounded-2xl bg-background border border-border shadow-[0_5px_0_hsl(var(--border))]">
+      <div className="relative z-10 w-full max-w-lg rounded-2xl bg-background border border-border shadow-[0_5px_0_hsl(var(--border))] overflow-y-auto max-h-[90vh] scrollbar-none">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-5 py-4">
           <div className="flex items-center gap-2.5">
@@ -209,7 +209,7 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
             onClick={onClose}
             className="flex h-7 w-7 items-center justify-center rounded-lg text-primary-foreground transition-colors hover:bg-primary hover:text-accent-foreground"
           >
-            <X size={14} />
+            <X size={15} />
           </Button>
         </div>
 
@@ -223,7 +223,12 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>URL</FieldLabel>
+                    <FieldLabel
+                      htmlFor={field.name}
+                      className="mb-1.5 block text-xs font-medium text-muted-foreground"
+                    >
+                      Paste a URL
+                    </FieldLabel>
                     <div className="flex gap-2">
                       <div className="relative flex-1">
                         <Globe
@@ -237,12 +242,14 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
                           aria-invalid={fieldState.invalid}
                           {...field}
                           ref={inputRef}
+                          className="w-full rounded-xl border border-border py-2.5 pl-9 pr-3 text-sm outline-none"
                         />
                       </div>
                       <Button
                         type="button"
                         onClick={handleFetch}
                         disabled={fetchState === "loading"}
+                        className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold disabled:cursor-not-allowed disabled:opacity-50"
                       >
                         {fetchState === "loading" ? (
                           <Loader2 size={13} className="animate-spin" />
@@ -251,6 +258,9 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
                         )}
                       </Button>
                     </div>
+                    <p className="mt-1.5 text-[11px] text-muted-foreground">
+                      Press Enter or click Fetch to retrieve metadata
+                    </p>
                     <Activity mode={fieldState.invalid ? "visible" : "hidden"}>
                       <FieldError errors={[fieldState.error]} />
                     </Activity>
@@ -314,59 +324,59 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
                       </div>
                     )}
                     <div className="p-4">
-                      <p className="mb-1 text-sm font-semibold text-foreground">
-                        {metadata.title}
-                      </p>
-                      <div className="text-xs text-muted-foreground">
-                        {metadata.description}
-                      </div>
+                      {/* Title Input */}
+                      <Controller
+                        name="title"
+                        control={form.control}
+                        render={({ field, fieldState }) => (
+                          <Field data-invalid={fieldState.invalid}>
+                            {/* <FieldLabel htmlFor={field.name}>
+                              Title <span>(optional)</span>
+                            </FieldLabel> */}
+                            <Input
+                              type="text"
+                              id={field.name}
+                              placeholder="Amazing Developer Resource"
+                              aria-invalid={fieldState.invalid}
+                              {...field}
+                              className="mb-1 w-full rounded-lg border border-transparent bg-transparent text-sm font-semibold text-foreground outline-none focus:px-2"
+                            />
+                            <Activity
+                              mode={fieldState.invalid ? "visible" : "hidden"}
+                            >
+                              <FieldError errors={[fieldState.error]} />
+                            </Activity>
+                          </Field>
+                        )}
+                      />
+                      {/* Description Input */}
+                      <Controller
+                        name="description"
+                        control={form.control}
+                        render={({ field, fieldState }) => (
+                          <Field data-invalid={fieldState.invalid}>
+                            {/* <FieldLabel htmlFor={field.name}>
+                              Description
+                            </FieldLabel> */}
+                            <Textarea
+                              id={field.name}
+                              placeholder="A fantastic resource for developers..."
+                              rows={2}
+                              {...field}
+                              className="w-full resize-none rounded-lg border border-transparent bg-transparent text-xs text-muted-foreground outline-none focus:px-2"
+                            />
+                            <Activity
+                              mode={fieldState.invalid ? "visible" : "hidden"}
+                            >
+                              <FieldError errors={[fieldState.error]} />
+                            </Activity>
+                          </Field>
+                        )}
+                      />
                     </div>
                   </div>
                 </>
               )}
-
-              {/* Title Input */}
-              <Controller
-                name="title"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>
-                      Title <span>(optional)</span>
-                    </FieldLabel>
-                    <Input
-                      type="text"
-                      id={field.name}
-                      placeholder="Amazing Developer Resource"
-                      aria-invalid={fieldState.invalid}
-                      {...field}
-                    />
-                    <Activity mode={fieldState.invalid ? "visible" : "hidden"}>
-                      <FieldError errors={[fieldState.error]} />
-                    </Activity>
-                  </Field>
-                )}
-              />
-
-              {/* Description Input */}
-              <Controller
-                name="description"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>Description</FieldLabel>
-                    <Textarea
-                      id={field.name}
-                      placeholder="A fantastic resource for developers..."
-                      rows={2}
-                      {...field}
-                    />
-                    <Activity mode={fieldState.invalid ? "visible" : "hidden"}>
-                      <FieldError errors={[fieldState.error]} />
-                    </Activity>
-                  </Field>
-                )}
-              />
 
               {/* Collection Picker */}
               <Controller
@@ -374,9 +384,14 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={field.name}>Collection</FieldLabel>
+                    <FieldLabel
+                      htmlFor={field.name}
+                      className="mb-1.5 block text-xs font-medium text-muted-foreground"
+                    >
+                      Collection
+                    </FieldLabel>
                     <Select value={field.value} onValueChange={field.onChange}>
-                      <SelectTrigger>
+                      <SelectTrigger className="w-full rounded-xl border border-border px-3 py-2.5 text-sm outline-none focus:ring-2">
                         <SelectValue placeholder="Select a collection" />
                       </SelectTrigger>
                       <SelectContent>
@@ -399,7 +414,9 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
 
               {/* Tags Input */}
               <Field>
-                <FieldLabel>Tags (optional)</FieldLabel>
+                <FieldLabel className="mb-1.5 block text-xs font-medium text-muted-foreground">
+                  Tags
+                </FieldLabel>
                 {/* Suggested tags from metadata */}
                 {fetchState === "success" && metadata?.tags && (
                   <div className="flex flex-wrap gap-1.5 mb-2">
