@@ -15,6 +15,8 @@ import { useApp } from "~/context/AppContext";
 import { cn } from "~/lib/utils";
 import { SortMode } from "~/types";
 import { Activity } from "./Activity";
+import { useBookmarkFilters } from "~/features/bookmarks/hooks/use-bookmark-filters";
+import { useGetBookmarks } from "~/features/bookmarks/api/get-bookmarks";
 
 const SORT_OPTIONS: { label: string; value: SortMode }[] = [
   { label: "Newest first", value: "newest" },
@@ -88,13 +90,32 @@ const Topbar = () => {
   const {
     setSidebarOpen,
     setCommandPaletteOpen,
-    filters,
-    setFilters,
     setAddModalOpen,
     viewMode,
-    setViewMode,
-    filteredBookmarks
+    setViewMode
   } = useApp();
+  const { filters, setFilters } = useBookmarkFilters();
+  const { data: bookmarks } = useGetBookmarks();
+
+  const filteredCount =
+    bookmarks?.filter((b) => {
+      if (
+        filters.search &&
+        !b.title.toLowerCase().includes(filters.search.toLowerCase())
+      )
+        return false;
+      if (filters.tag && !b.tags?.includes(filters.tag)) return false;
+      if (filters.collectionId && b.collectionId !== filters.collectionId)
+        return false;
+      if (filters.showFavorites && !b.isFavorite) return false;
+      if (filters.showRecent) {
+        const weekAgo = new Date();
+        weekAgo.setDate(weekAgo.getDate() - 7);
+        if (new Date(b.createdAt) < weekAgo) return false;
+      }
+      return true;
+    }).length ?? 0;
+
   return (
     <header className="sticky top-0 z-10 flex flex-col border-b border-zinc-800/80 bg-zinc-900/95 backdrop-blur-md">
       <div className="flex items-center gap-3 px-4 py-3">
@@ -163,14 +184,14 @@ const Topbar = () => {
       {/* Result count */}
       <div className="flex flex-wrap items-center gap-2 border-t border-zinc-800/50 px-4 py-2">
         <span className="text-xs text-zinc-600">
-          {filteredBookmarks.length} bookmark
-          {filteredBookmarks.length !== 1 ? "s" : ""}
+          {filteredCount} bookmark
+          {filteredCount !== 1 ? "s" : ""}
         </span>
         <Activity mode={filters.search ? "visible" : "hidden"}>
           <span className="flex items-center gap-1 rounded-md bg-indigo-500/10 px-2 py-0.5 text-xs text-indigo-400">
             Search: &quot;{filters.search}&quot;
             <button
-              onClick={() => setFilters((f) => ({ ...f, search: "" }))}
+              onClick={() => setFilters({ search: null })}
               className="ml-1 text-indigo-500 hover:text-indigo-300"
             >
               ×
@@ -181,7 +202,7 @@ const Topbar = () => {
           <span className="flex items-center gap-1 rounded-md bg-violet-500/10 px-2 py-0.5 text-xs text-violet-400">
             #{filters.tag}
             <button
-              onClick={() => setFilters((f) => ({ ...f, tag: null }))}
+              onClick={() => setFilters({ tag: null })}
               className="ml-1 text-violet-500 hover:text-violet-300"
             >
               ×
