@@ -5,6 +5,7 @@ import { cn } from "~/lib/utils";
 import { AppProvider } from "~/context/AppContext";
 import { QueryProvider } from "~/lib/query-provider";
 import { ThemeProvider } from "~/context/theme-provider";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -42,7 +43,9 @@ export default function RootLayout({
       <body>
         <ThemeProvider>
           <QueryProvider>
-            <AppProvider>{children}</AppProvider>
+            <AppProvider>
+              <NuqsAdapter>{children}</NuqsAdapter>
+            </AppProvider>
           </QueryProvider>
         </ThemeProvider>
       </body>
