@@ -12,10 +12,12 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment, useEffect, useState } from "react";
-import { useApp } from "~/context/AppContext";
 import { Activity } from "../../../components/partials/Activity";
 import { cn } from "~/lib/utils";
 import { Bookmark } from "~/types/api";
+import { useUpdateBookmark } from "../api/update-bookmark";
+import { useDeleteBookmark } from "../api/delete-bookmark";
+import { useApp } from "~/context/AppContext";
 
 interface BookmarkCardProps {
   bookmark: Bookmark;
@@ -96,7 +98,8 @@ function OGImage({ src, alt }: { src: string; alt: string }) {
 }
 
 const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
-  const { toggleFavorite, deleteBookmark } = useApp();
+  const updateBookmark = useUpdateBookmark();
+  const deleteBookmark = useDeleteBookmark();
   const [copied, setCopied] = useState<boolean>(false);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [deleteConfirm, setDeleteConfirm] = useState<boolean>(false);
@@ -113,14 +116,21 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
   const handleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    toggleFavorite(bookmark.id);
+    updateBookmark.mutate({
+      id: bookmark.id,
+      data: {
+        isFavorite: !bookmark.isFavorite
+      }
+    });
   };
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (deleteConfirm) {
-      deleteBookmark(bookmark.id);
+      deleteBookmark.mutate({
+        id: bookmark.id
+      });
     } else {
       setDeleteConfirm(true);
       setTimeout(() => setDeleteConfirm(false), 3000);
