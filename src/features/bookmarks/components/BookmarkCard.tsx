@@ -18,6 +18,7 @@ import { Bookmark } from "~/types/api";
 import { useUpdateBookmark } from "../api/update-bookmark";
 import { useDeleteBookmark } from "../api/delete-bookmark";
 import { useApp } from "~/context/AppContext";
+import { useBookmarkFilters } from "../hooks/use-bookmark-filters";
 
 interface BookmarkCardProps {
   bookmark: Bookmark;
@@ -25,7 +26,7 @@ interface BookmarkCardProps {
 }
 
 function TagPill({ tag }: { tag: string }) {
-  const { setFilters } = useApp();
+  const { setFilters } = useBookmarkFilters();
   return (
     <button
       onClick={(e) => {
