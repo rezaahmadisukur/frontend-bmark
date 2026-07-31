@@ -2,12 +2,29 @@
 
 import { useGetBookmarks } from "~/features/bookmarks/api/get-bookmarks";
 import BookmarkCard from "./BookmarkCard";
+import DeleteBookmarkModal from "./DeleteBookmarkModal";
 import { Loader2 } from "lucide-react";
 import { useBookmarkFilters } from "../hooks/use-bookmark-filters";
+import { useState } from "react";
+import { Bookmark } from "~/types/api";
 
 const MainContent = () => {
   const { data: bookmarks, isLoading, error } = useGetBookmarks();
   const { filters } = useBookmarkFilters();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [bookmarkToDelete, setBookmarkToDelete] = useState<Bookmark | null>(
+    null
+  );
+
+  const handleDeleteClick = (bookmark: Bookmark) => {
+    setBookmarkToDelete(bookmark);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteModalClose = () => {
+    setIsDeleteModalOpen(false);
+    setBookmarkToDelete(null);
+  };
 
   const filteredBookmarks = bookmarks?.filter((b) => {
     if (
@@ -47,17 +64,30 @@ const MainContent = () => {
   if (!filteredBookmarks || filteredBookmarks.length === 0) {
     return (
       <div className="p-5 text-center text-muted-foreground">
-        No bookmarks found. Tru adjusting your filters
+        No bookmarks found. Try adjusting your filters
       </div>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2 xl:grid-cols-3">
-      {filteredBookmarks?.map((bookmark) => (
-        <BookmarkCard key={bookmark.id} bookmark={bookmark} viewMode="grid" />
-      ))}
-    </div>
+    <>
+      <div className="grid grid-cols-1 gap-4 p-5 sm:grid-cols-2 xl:grid-cols-3">
+        {filteredBookmarks?.map((bookmark) => (
+          <BookmarkCard
+            key={bookmark.id}
+            bookmark={bookmark}
+            viewMode="grid"
+            onDeleteClick={handleDeleteClick}
+          />
+        ))}
+      </div>
+
+      <DeleteBookmarkModal
+        isOpen={isDeleteModalOpen}
+        onClose={handleDeleteModalClose}
+        bookmark={bookmarkToDelete}
+      />
+    </>
   );
 };
 
