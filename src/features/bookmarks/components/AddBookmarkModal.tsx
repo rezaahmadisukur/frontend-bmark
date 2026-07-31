@@ -21,7 +21,7 @@ import {
   FieldError
 } from "~/components/ui/field";
 import { Input } from "~/components/ui/input";
-import { Button } from "~/components/custom/button";
+import { Button } from "~/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, Controller } from "react-hook-form";
 import { Activity } from "~/components/partials/Activity";
@@ -38,12 +38,20 @@ import { Bookmark } from "~/types/api";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
+type BookmarkMetadata = {
+  title?: string;
+  description?: string;
+  image?: string;
+  favicon?: string;
+  tags?: string[];
+};
+
 type AddBookmarkModalProps = {
   isOpen: boolean;
   onClose: () => void;
 };
 
-async function fetchMockMetadata(url: string): Promise<Partial<Bookmark>> {
+async function fetchMockMetadata(url: string): Promise<BookmarkMetadata> {
   // Simulate network delay (1.5s)
   await new Promise((r) => setTimeout(r, 1500));
 
@@ -135,7 +143,7 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
     resolver: zodResolver(createBookmarkInputSchema)
   });
   const [fetchState, setFetchState] = useState<FetchState>("idle");
-  const [metadata, setMetadata] = useState<Partial<Bookmark> | null>(null);
+  const [metadata, setMetadata] = useState<BookmarkMetadata | null>(null);
   // const [customTags, setCustomTags] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   // const [tagInput, setTagInput] = useState("");
@@ -413,28 +421,42 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
               />
 
               {/* Tags Input */}
-              <Field>
-                <FieldLabel className="mb-1.5 block text-xs font-medium text-muted-foreground">
-                  Tags
-                </FieldLabel>
-                {/* Suggested tags from metadata */}
-                {fetchState === "success" && metadata?.tags && (
-                  <div className="flex flex-wrap gap-1.5 mb-2">
-                    {metadata.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded-md bg-primary/20 px-2 py-0.5 text-[11px] font-medium text-primary"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
+              <Controller
+                name="tags"
+                control={form.control}
+                render={({ field }) => (
+                  <Field>
+                    <FieldLabel>Tags (optional)</FieldLabel>
+                    {fetchState === "success" && metadata?.tags && (
+                      <div className="flex flex-wrap gap-1.5 mb-2">
+                        {metadata.tags.map((tag) => (
+                          <span
+                            key={tag}
+                            className="rounded-md bg-primary/20 px-2 py-0.5 text-[11px] font-medium text-primary"
+                          >
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                    <Input
+                      type="text"
+                      placeholder="react, typescript, nextjs"
+                      value={field.value?.join(", ") ?? ""}
+                      onChange={(e) => {
+                        const tagsArray = e.target.value
+                          .split(",")
+                          .map((t) => t.trim())
+                          .filter(Boolean);
+                        field.onChange(tagsArray);
+                      }}
+                    />
+                    <p className="mt-1 text-[11px] text-muted-foreground/70">
+                      Separate tags with commas
+                    </p>
+                  </Field>
                 )}
-                <Input type="text" placeholder="react, typescript, nextjs" />
-                <p className="mt-1 text-[11px] text-muted-foreground/70">
-                  Separate tags with commas
-                </p>
-              </Field>
+              />
 
               {/* Footer */}
               <div className="flex items-center justify-end gap-2 pt-4">
