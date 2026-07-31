@@ -20,8 +20,8 @@ export type Bookmark = {
   description: string;
   image: string;
   favicon: string;
-  tags: string[];
   collectionId: string;
+  tags?: { tag: { id: string; name: string; color?: string } }[];
   createdAt: Date;
   isFavorite: boolean;
 };
