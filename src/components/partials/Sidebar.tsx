@@ -56,14 +56,16 @@ function NavItem({ label, icon, active, count, onClick }: NavItemProps) {
       className={cn(
         "group flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-150",
         active
-          ? "bg-zinc-700/60 text-white"
-          : "text-zinc-400 hover:bg-zinc-800/70 hover:text-zinc-100"
+          ? "bg-sidebar-primary/60 text-sidebar-primary-foreground"
+          : "text-sidebar-foreground/70 hover:bg-sidebar-accent/70 hover:text-sidebar-foreground"
       )}
     >
       <span
         className={cn(
           "shrink-0",
-          active ? "text-indigo-400" : "text-zinc-500 group-hover:text-zinc-300"
+          active
+            ? "text-sidebar-primary"
+            : "text-sidebar-foreground/50 group-hover:text-sidebar-foreground/80"
         )}
       >
         {icon}
@@ -74,8 +76,8 @@ function NavItem({ label, icon, active, count, onClick }: NavItemProps) {
           className={cn(
             "ml-auto rounded-md px-1.5 py-0.5 text-xs font-medium tabular-nums",
             active
-              ? "bg-indigo-500/20 text-indigo-300"
-              : "bg-zinc-700/80 text-zinc-500"
+              ? "bg-sidebar-primary/20 text-sidebar-primary-foreground"
+              : "bg-sidebar-accent/80 text-sidebar-foreground/60"
           )}
         >
           {count}
@@ -106,8 +108,8 @@ function CollectionItem({ collection }: { collection: Collection }) {
       className={cn(
         "group flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-all duration-150",
         isActive
-          ? "bg-zinc-700/60 text-white"
-          : "text-zinc-400 hover:bg-zinc-800/70 hover:text-zinc-100"
+          ? "bg-sidebar-primary/60 text-sidebar-primary-foreground"
+          : "text-sidebar-foreground/70 hover:bg-sidebar-accent/70 hover:text-sidebar-foreground"
       )}
     >
       <span
@@ -121,8 +123,8 @@ function CollectionItem({ collection }: { collection: Collection }) {
         className={cn(
           "ml-auto rounded-md px-1.5 py-0.5 text-xs tabular-nums",
           isActive
-            ? "bg-indigo-500/20 text-indigo-300"
-            : "bg-zinc-700/80 text-zinc-500"
+            ? "bg-sidebar-primary/20 text-sidebar-primary-foreground"
+            : "bg-sidebar-accent/80 text-sidebar-foreground/60"
         )}
       >
         {count}
@@ -132,8 +134,8 @@ function CollectionItem({ collection }: { collection: Collection }) {
         className={cn(
           "shrink-0 transition-transform",
           isActive
-            ? "rotate-90 text-zinc-400"
-            : "text-zinc-600 group-hover:text-zinc-500"
+            ? "rotate-90 text-sidebar-foreground/70"
+            : "text-sidebar-foreground/40 group-hover:text-sidebar-foreground/50"
         )}
       />
     </button>
@@ -181,26 +183,28 @@ const Sidebar = () => {
 
       <aside
         className={cn(
-          "fixed left-0 top-0 z-30 flex h-full w-64 flex-col border-r border-zinc-800/80 bg-zinc-900 transition-transform duration-300 lg:static lg:translate-x-0",
+          "fixed left-0 top-0 z-30 flex h-full w-64 flex-col border-r border-sidebar-border bg-sidebar transition-transform duration-300 lg:static lg:translate-x-0",
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         {/* Logo */}
-        <div className="flex items-center justify-between border-b border-zinc-800/80 px-4 py-4">
+        <div className="flex items-center justify-between border-b border-sidebar-border px-4 py-4">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-indigo-500 to-violet-600 shadow-lg shadow-indigo-900/50">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-linear-to-br from-sidebar-primary to-sidebar-accent shadow-lg shadow-sidebar-primary/50">
               <Bookmark size={14} className="text-white" />
             </div>
             <div>
-              <span className="text-sm font-bold tracking-tight text-white">
+              <span className="text-sm font-bold tracking-tight text-sidebar-foreground">
                 B-Mark
               </span>
-              <p className="text-[10px] text-zinc-500">Developer Bookmarks</p>
+              <p className="text-[10px] text-sidebar-foreground/60">
+                Developer Bookmarks
+              </p>
             </div>
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="flex h-6 w-6 items-center justify-center rounded text-zinc-500 hover:text-zinc-300 lg:hidden"
+            className="flex h-6 w-6 items-center justify-center rounded text-sidebar-foreground/50 hover:text-sidebar-foreground lg:hidden"
           >
             <X size={14} />
           </button>
@@ -238,15 +242,15 @@ const Sidebar = () => {
           </div>
 
           {/* Divider */}
-          <div className="my-2 border-t border-zinc-800/80" />
+          <div className="my-2 border-t border-sidebar-border" />
 
           {/* Collections */}
           <div>
             <div className="mb-2 flex items-center justify-between px-3">
-              <span className="text-[11px] font-semibold uppercase tracking-widest text-zinc-600">
+              <span className="text-[11px] font-semibold uppercase tracking-widest text-sidebar-foreground/60">
                 Collections
               </span>
-              <button className="flex h-5 w-5 items-center justify-center rounded text-zinc-600 hover:bg-zinc-800 hover:text-zinc-400 transition-colors">
+              <button className="flex h-5 w-5 items-center justify-center rounded text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors">
                 <Plus size={12} />
               </button>
             </div>
@@ -259,14 +263,18 @@ const Sidebar = () => {
         </nav>
 
         {/* Footer */}
-        <div className="border-t border-zinc-800/80 p-3">
+        <div className="border-t border-sidebar-border p-3">
           <div className="flex items-center gap-2.5 rounded-lg px-3 py-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-linear-to-br from-indigo-500 to-violet-600 text-xs font-bold text-white">
+            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-linear-to-br from-sidebar-primary to-sidebar-accent text-xs font-bold text-sidebar-primary-foreground">
               BM
             </div>
             <div>
-              <p className="text-xs font-medium text-zinc-300">Dev User</p>
-              <p className="text-[10px] text-zinc-600">example@bmark.app</p>
+              <p className="text-xs font-medium text-sidebar-foreground/80">
+                Dev User
+              </p>
+              <p className="text-[10px] text-sidebar-foreground/50">
+                example@bmark.app
+              </p>
             </div>
           </div>
         </div>
