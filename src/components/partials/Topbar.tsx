@@ -45,7 +45,7 @@ function SortDropdown() {
     <div className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1.5 rounded-lg border border-zinc-700/60 bg-zinc-800/60 px-3 py-2 text-xs font-medium text-zinc-300 transition-colors hover:bg-zinc-700/60 hover:text-white"
+        className="flex items-center gap-1.5 rounded-lg border border-border bg-muted px-3 py-2 text-xs font-medium text-foreground/80 transition-colors hover:bg-muted/80 hover:text-foreground"
       >
         <SlidersHorizontal size={12} />
         <span className="hidden sm:inline">{currentLabel}</span>
@@ -56,8 +56,8 @@ function SortDropdown() {
       </button>
 
       <Activity mode={open ? "visible" : "hidden"}>
-        <div className="absolute right-0 top-full z-50 mt-1.5 w-40 overflow-hidden rounded-xl border border-zinc-700/60 bg-zinc-800 shadow-2xl shadow-black/50">
-          <div className="bg-zinc-800 p-1">
+        <div className="absolute right-0 top-full z-50 mt-1.5 w-40 overflow-hidden rounded-xl border border-border bg-background shadow-2xl shadow-black/50">
+          <div className="bg-background p-1">
             {SORT_OPTIONS.map((opt) => (
               <button
                 key={opt.value}
@@ -68,12 +68,12 @@ function SortDropdown() {
                 className={cn(
                   "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition-colors",
                   sortMode === opt.value
-                    ? "bg-indigo-600/30 text-indigo-300"
-                    : "text-zinc-400 hover:bg-zinc-700/60 hover:text-white"
+                    ? "bg-primary/30 text-primary/80"
+                    : "text-muted-foreground hover:bg-muted/80 hover:text-foreground"
                 )}
               >
                 {sortMode === opt.value && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary" />
                 )}
                 {sortMode !== opt.value && <span className="w-1.5 h-1.5" />}
                 {opt.label}
@@ -118,12 +118,12 @@ const Topbar = () => {
     }).length ?? 0;
 
   return (
-    <header className="sticky top-0 z-10 flex flex-col border-b border-zinc-800/80 bg-zinc-900/95 backdrop-blur-md">
+    <header className="sticky top-0 z-10 flex flex-col border-b border-border bg-background/95 backdrop-blur-md">
       <div className="flex items-center gap-3 px-4 py-3">
         {/* Mobile menu */}
         <button
           onClick={() => setSidebarOpen(true)}
-          className="w-8 h-8 flex justify-center items-center rounded-lg text-zinc-400 hover:bg-zinc-800 hover:text-white lg:hidden cursor-pointer"
+          className="w-8 h-8 flex justify-center items-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground lg:hidden cursor-pointer"
         >
           <Menu size={16} />
         </button>
@@ -131,27 +131,27 @@ const Topbar = () => {
         {/* Search bar */}
         <button
           onClick={() => setCommandPaletteOpen(true)}
-          className="group flex flex-1 items-center gap-2.5 rounded-xl border border-zinc-700/60 bg-zinc-800/50 px-3.5 py-2 text-sm text-zinc-500 transition-all hover:border-zinc-600/60 hover:bg-zinc-800/80 hover:text-zinc-400"
+          className="group flex flex-1 items-center gap-2.5 rounded-xl border border-border bg-muted/50 px-3.5 py-2 text-sm text-muted-foreground transition-all hover:border-border/80 hover:bg-muted/80 hover:text-foreground/80"
         >
           <Search size={14} className="shrink-0" />
           <span className="flex-1 text-left text-sm">
             {filters.search || "Search bookmarks..."}
           </span>
-          <div className="flex items-center gap-0.5 rounded-md border border-zinc-700/60 bg-zinc-800 px-1.5 py-0.5 text-[10px] font-medium text-zinc-600">
+          <div className="flex items-center gap-0.5 rounded-md border border-border bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground/80">
             <Command size={10} />
             <span>K</span>
           </div>
         </button>
 
         {/* View toggle */}
-        <div className="hidden items-center rounded-lg border border-zinc-700/60 bg-zinc-800/60 p-1 sm:flex">
+        <div className="hidden items-center rounded-lg border border-border bg-muted p-1 sm:flex">
           <button
             onClick={() => setViewMode("grid")}
             className={cn(
               "rounded-md p-1.5 transition-colors",
               viewMode === "grid"
-                ? "bg-zinc-700 text-white"
-                : "text-zinc-500 hover:text-zinc-300"
+                ? "bg-muted-foreground/20 text-foreground"
+                : "text-muted-foreground hover:text-foreground/80"
             )}
           >
             <LayoutGrid size={14} />
@@ -161,8 +161,8 @@ const Topbar = () => {
             className={cn(
               "rounded-md p-1.5 transition-colors",
               viewMode === "list"
-                ? "bg-zinc-700 text-white"
-                : "text-zinc-500 hover:text-zinc-300"
+                ? "bg-muted-foreground/20 text-foreground"
+                : "text-muted-foreground hover:text-foreground/80"
             )}
           >
             <List size={14} />
@@ -175,7 +175,7 @@ const Topbar = () => {
         {/* Add button */}
         <button
           onClick={() => setAddModalOpen(true)}
-          className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-2 text-xs font-semibold text-white shadow-lg shadow-indigo-900/40 transition-all hover:bg-indigo-500 active:scale-95 cursor-pointer"
+          className="flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-xs font-semibold text-primary-foreground shadow-lg shadow-primary/40 transition-all hover:bg-primary/90 active:scale-95 cursor-pointer"
         >
           <Plus size={14} />
           <span className="hidden sm:inline">Add new</span>
@@ -183,28 +183,28 @@ const Topbar = () => {
       </div>
 
       {/* Result count */}
-      <div className="flex flex-wrap items-center gap-2 border-t border-zinc-800/50 px-4 py-2">
-        <span className="text-xs text-zinc-600">
+      <div className="flex flex-wrap items-center gap-2 border-t border-border/80 px-4 py-2">
+        <span className="text-xs text-muted-foreground/80">
           {filteredCount} bookmark
           {filteredCount !== 1 ? "s" : ""}
         </span>
         <Activity mode={filters.search ? "visible" : "hidden"}>
-          <span className="flex items-center gap-1 rounded-md bg-indigo-500/10 px-2 py-0.5 text-xs text-indigo-400">
-            Search: &quot;{filters.search}&quot;
+          <span className="flex items-center gap-1 rounded-md bg-primary/10 px-2 py-0.5 text-xs text-primary">
+            Search: {filters.search}
             <button
               onClick={() => setFilters({ search: null })}
-              className="ml-1 text-indigo-500 hover:text-indigo-300"
+              className="ml-1 text-primary/80 hover:text-primary"
             >
               ×
             </button>
           </span>
         </Activity>
         <Activity mode={filters.tag ? "visible" : "hidden"}>
-          <span className="flex items-center gap-1 rounded-md bg-violet-500/10 px-2 py-0.5 text-xs text-violet-400">
+          <span className="flex items-center gap-1 rounded-md bg-accent/10 px-2 py-0.5 text-xs text-accent">
             #{filters.tag}
             <button
               onClick={() => setFilters({ tag: null })}
-              className="ml-1 text-violet-500 hover:text-violet-300"
+              className="ml-1 text-accent/80 hover:text-accent"
             >
               ×
             </button>
