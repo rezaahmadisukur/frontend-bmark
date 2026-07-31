@@ -10,7 +10,7 @@ export const createBookmarkInputSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
   collectionId: z.string().optional(),
-  tagsId: z.string().optional()
+  tags: z.array(z.string()).optional()
 });
 
 export type CreateBookmarkInput = z.infer<typeof createBookmarkInputSchema>;
