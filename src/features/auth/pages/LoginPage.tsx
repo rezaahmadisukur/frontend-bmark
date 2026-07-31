@@ -13,7 +13,7 @@ import { Input } from "~/components/ui/input";
 import { Loader2 } from "lucide-react";
 import { Activity } from "~/components/partials/Activity";
 import Link from "next/link";
-import { Button } from "~/components/custom/button";
+import { Button } from "~/components/ui/button";
 
 const LoginPage = () => {
   const loginMutation = useLogin();
