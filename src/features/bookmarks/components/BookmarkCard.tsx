@@ -25,18 +25,22 @@ interface BookmarkCardProps {
   viewMode: "grid" | "list";
 }
 
-function TagPill({ tag }: { tag: string }) {
+function TagPill({
+  tag
+}: {
+  tag: { tag: { id: string; name: string; color?: string } };
+}) {
   const { setFilters } = useBookmarkFilters();
   return (
     <button
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        setFilters((f) => ({ ...f, tag }));
+        setFilters({ tag: tag.tag.name });
       }}
       className="rounded-md bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground transition-colors hover:bg-primary/20 hover:text-primary"
     >
-      #{tag}
+      #{tag.tag.name}
     </button>
   );
 }
@@ -198,7 +202,7 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
           {/* Tags - hidden on mobile */}
           <div className="hidden shrink-0 items-center gap-1 lg:flex">
             {bookmark.tags?.slice(0, 2).map((tag) => (
-              <TagPill key={tag} tag={tag} />
+              <TagPill key={tag.tag.id} tag={tag} />
             ))}
           </div>
 
@@ -388,7 +392,7 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
             {/* Tags */}
             <div className="flex flex-wrap gap-1">
               {bookmark.tags?.slice(0, 4).map((tag) => (
-                <TagPill key={tag} tag={tag} />
+                <TagPill key={tag.tag.id} tag={tag} />
               ))}
               {bookmark.tags?.length > 4 && (
                 <span className="rounded-md bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
