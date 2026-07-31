@@ -16,13 +16,12 @@ import { Activity } from "../../../components/partials/Activity";
 import { cn } from "~/lib/utils";
 import { Bookmark } from "~/types/api";
 import { useUpdateBookmark } from "../api/update-bookmark";
-import { useDeleteBookmark } from "../api/delete-bookmark";
-import { useApp } from "~/context/AppContext";
 import { useBookmarkFilters } from "../hooks/use-bookmark-filters";
 
 interface BookmarkCardProps {
   bookmark: Bookmark;
   viewMode: "grid" | "list";
+  onDeleteClick: (bookmark: Bookmark) => void;
 }
 
 function TagPill({
@@ -102,12 +101,14 @@ function OGImage({ src, alt }: { src: string; alt: string }) {
   );
 }
 
-const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
+const BookmarkCard = ({
+  bookmark,
+  viewMode,
+  onDeleteClick
+}: BookmarkCardProps) => {
   const updateBookmark = useUpdateBookmark();
-  const deleteBookmark = useDeleteBookmark();
   const [copied, setCopied] = useState<boolean>(false);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
-  const [deleteConfirm, setDeleteConfirm] = useState<boolean>(false);
   const [timeAgo, setTimeAgo] = useState("");
 
   const handleCopy = (e: React.MouseEvent) => {
@@ -132,14 +133,8 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (deleteConfirm) {
-      deleteBookmark.mutate({
-        id: bookmark.id
-      });
-    } else {
-      setDeleteConfirm(true);
-      setTimeout(() => setDeleteConfirm(false), 3000);
-    }
+    setMenuOpen(false);
+    onDeleteClick(bookmark);
   };
 
   const domain = (() => {
@@ -162,21 +157,18 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
     };
 
     update();
-    const interval = setInterval(update, 60_000); // update setiap menit
+    const interval = setInterval(update, 60_000);
     return () => clearInterval(interval);
   }, [bookmark.createdAt]);
 
-  // Grid View
   return (
     <Fragment>
       <Activity mode={viewMode === "list" ? "visible" : "hidden"}>
         <div className="group relative flex items-center gap-4 rounded-xl border border-border bg-card p-4 transition-all duration-200 hover:border-primary/50 hover:bg-muted/60 hover:shadow-lg hover:shadow-black/20">
-          {/* Favicon */}
           <div className="shrink-0">
             <FaviconImage src={bookmark.favicon || ""} alt={bookmark.title} />
           </div>
 
-          {/* Content */}
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <Link
@@ -199,14 +191,12 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
             </p>
           </div>
 
-          {/* Tags - hidden on mobile */}
           <div className="hidden shrink-0 items-center gap-1 lg:flex">
             {bookmark.tags?.slice(0, 2).map((tag) => (
               <TagPill key={tag.tag.id} tag={tag} />
             ))}
           </div>
 
-          {/* Domain + time */}
           <div className="hidden shrink-0 flex-col items-end gap-1 sm:flex">
             <span className="text-[10px] text-muted-foreground">{domain}</span>
             <span className="text-[10px] text-muted-foreground/70">
@@ -214,7 +204,6 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
             </span>
           </div>
 
-          {/* Actions */}
           <div className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
             <button
               onClick={handleCopy}
@@ -252,13 +241,8 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
             </button>
             <button
               onClick={handleDelete}
-              title={deleteConfirm ? "Click again to confirm" : "Delete"}
-              className={cn(
-                "flex h-7 w-7 items-center justify-center rounded-lg bg-muted transition-colors hover:bg-accent",
-                deleteConfirm
-                  ? "text-destructive"
-                  : "text-muted-foreground hover:text-destructive"
-              )}
+              title="Delete"
+              className="flex h-7 w-7 items-center justify-center rounded-lg bg-muted text-muted-foreground transition-colors hover:bg-accent hover:text-destructive"
             >
               <Trash2 size={12} />
             </button>
@@ -268,13 +252,10 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
 
       <Activity mode={viewMode === "grid" ? "visible" : "hidden"}>
         <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-border bg-card transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-2xl hover:shadow-black/40">
-          {/* OG Image */}
           <div className="relative h-40 overflow-hidden bg-muted">
             <OGImage src={bookmark.image || ""} alt={bookmark.title} />
-            {/* Gradient overlay */}
             <div className="absolute inset-0 bg-linear-to-t from-card/80 via-transparent to-transparent" />
 
-            {/* Top actions overlay */}
             <div className="absolute right-2 top-2 flex items-center gap-1.5 opacity-0 transition-all duration-200 group-hover:opacity-100">
               <button
                 onClick={handleCopy}
@@ -307,7 +288,6 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
               </button>
             </div>
 
-            {/* Dropdown menu */}
             {menuOpen && (
               <div
                 className="absolute right-2 top-10 z-50 min-w-35 overflow-hidden rounded-xl border border-border bg-popover shadow-2xl shadow-black/50"
@@ -336,21 +316,15 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
                       handleDelete(e);
                       setMenuOpen(false);
                     }}
-                    className={cn(
-                      "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs hover:bg-accent",
-                      deleteConfirm
-                        ? "text-destructive"
-                        : "text-popover-foreground"
-                    )}
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs text-popover-foreground hover:bg-accent"
                   >
                     <Trash2 size={12} />
-                    {deleteConfirm ? "Confirm Delete" : "Delete"}
+                    Delete
                   </button>
                 </div>
               </div>
             )}
 
-            {/* Favorite badge */}
             {bookmark.isFavorite && (
               <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-accent/20 px-2 py-0.5 backdrop-blur-sm">
                 <Star size={10} className="fill-amber-400 text-amber-400" />
@@ -361,9 +335,7 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
             )}
           </div>
 
-          {/* Card body */}
           <div className="flex flex-1 flex-col p-4">
-            {/* Domain row */}
             <div className="mb-2.5 flex items-center gap-2">
               <FaviconImage src={bookmark.favicon || ""} alt={bookmark.title} />
               <span className="truncate text-[11px] text-muted-foreground">
@@ -374,7 +346,6 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
               </span>
             </div>
 
-            {/* Title */}
             <Link
               href={bookmark.url}
               target="_blank"
@@ -384,17 +355,15 @@ const BookmarkCard = ({ bookmark, viewMode }: BookmarkCardProps) => {
               {bookmark.title}
             </Link>
 
-            {/* Description */}
             <p className="mb-3 line-clamp-2 flex-1 text-xs leading-relaxed text-muted-foreground">
               {bookmark.description}
             </p>
 
-            {/* Tags */}
             <div className="flex flex-wrap gap-1">
               {bookmark.tags?.slice(0, 4).map((tag) => (
                 <TagPill key={tag.tag.id} tag={tag} />
               ))}
-              {bookmark.tags?.length > 4 && (
+              {(bookmark.tags?.length ?? 0) > 4 && (
                 <span className="rounded-md bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
                   +{(bookmark.tags?.length ?? 0) - 4}
                 </span>
