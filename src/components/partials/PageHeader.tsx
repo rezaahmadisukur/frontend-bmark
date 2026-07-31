@@ -38,13 +38,13 @@ const PageHeader = () => {
     if (filters.showFavorites)
       return {
         label: "Favorites",
-        icon: <Star size={20} className="text-amber-400" />
+        icon: <Star size={20} className="text-primary" />
       };
 
     if (filters.showRecent)
       return {
         label: "Recent",
-        icon: <Clock size={20} className="text-blue-400" />
+        icon: <Clock size={20} className="text-primary" />
       };
 
     if (filters.collectionId) {
@@ -60,12 +60,12 @@ const PageHeader = () => {
     if (filters.tag)
       return {
         label: `#${filters.tag}`,
-        icon: <Hash size={20} className="text-violet-400" />
+        icon: <Hash size={20} className="text-accent" />
       };
 
     return {
       label: "All Bookmarks",
-      icon: <Bookmark size={20} className="text-indigo-400" />
+      icon: <Bookmark size={20} className="text-primary" />
     };
   };
 
@@ -87,13 +87,13 @@ const PageHeader = () => {
   })();
 
   return (
-    <div className="flex items-center gap-3 border-b border-zinc-800/60 px-5 py-4">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-zinc-800/80">
+    <div className="flex items-center gap-3 border-b border-border px-5 py-4">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-muted">
         {icon}
       </div>
       <div>
-        <h1 className="text-base font-bold text-zinc-100">{label}</h1>
-        <p className="text-xs text-zinc-600">
+        <h1 className="text-base font-bold text-foreground">{label}</h1>
+        <p className="text-xs text-muted-foreground">
           {totalCount} bookmark{totalCount !== 1 ? "s" : ""}
           {filters.search &&
             ` · ${filteredBookmarks.length} result${filteredBookmarks.length !== 1 ? "s" : ""}`}
