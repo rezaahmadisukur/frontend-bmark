@@ -104,7 +104,8 @@ const Topbar = () => {
         !b.title.toLowerCase().includes(filters.search.toLowerCase())
       )
         return false;
-      if (filters.tag && !b.tags?.includes(filters.tag)) return false;
+      if (filters.tag && !b.tags?.some((t) => t.tag.name === filters.tag))
+        return false;
       if (filters.collectionId && b.collectionId !== filters.collectionId)
         return false;
       if (filters.showFavorites && !b.isFavorite) return false;
