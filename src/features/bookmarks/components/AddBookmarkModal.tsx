@@ -34,7 +34,6 @@ import {
   SelectTrigger,
   SelectValue
 } from "~/components/ui/select";
-import { Bookmark } from "~/types/api";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 
