@@ -146,6 +146,8 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
       if (data.title) form.setValue("title", data.title);
       if (data.description) form.setValue("description", data.description);
       setFetchState("success");
+      if (data.image) form.setValue("image", data.image);
+      if (data.favicon) form.setValue("favicon", data.favicon);
     } catch {
       setFetchState("error");
     }
