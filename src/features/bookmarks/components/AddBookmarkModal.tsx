@@ -36,6 +36,7 @@ import {
 } from "~/components/ui/select";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { fetchMetadata } from "../api/get-metadata";
 
 type BookmarkMetadata = {
   title?: string;
@@ -50,28 +51,28 @@ type AddBookmarkModalProps = {
   onClose: () => void;
 };
 
-async function fetchMockMetadata(url: string): Promise<BookmarkMetadata> {
-  // Simulate network delay (1.5s)
-  await new Promise((r) => setTimeout(r, 1500));
+// async function fetchMockMetadata(url: string): Promise<BookmarkMetadata> {
+//   // Simulate network delay (1.5s)
+//   await new Promise((r) => setTimeout(r, 1500));
 
-  const domain = (() => {
-    try {
-      return new URL(url).hostname;
-    } catch {
-      return "";
-    }
-  })();
+//   const domain = (() => {
+//     try {
+//       return new URL(url).hostname;
+//     } catch {
+//       return "";
+//     }
+//   })();
 
-  const brandName = domain.replace(/^www\./, "").split(".")[0];
+//   const brandName = domain.replace(/^www\./, "").split(".")[0];
 
-  const title = brandName.charAt(0).toUpperCase() + brandName.slice(1);
+//   const title = brandName.charAt(0).toUpperCase() + brandName.slice(1);
 
-  return {
-    title: title,
-    image: `https://image.thum.io/get/width/400/crop/400/https://${domain}`,
-    favicon: `https://${domain}/favicon.ico`
-  };
-}
+//   return {
+//     title: title,
+//     image: `https://image.thum.io/get/width/400/crop/400/https://${domain}`,
+//     favicon: `https://${domain}/favicon.ico`
+//   };
+// }
 
 function LoadingSkeleton() {
   return (
@@ -140,7 +141,7 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
     setFetchState("loading");
     setMetadata(null);
     try {
-      const data = await fetchMockMetadata(urlValue);
+      const data = await fetchMetadata(urlValue);
       setMetadata(data);
       // Auto-fill title & description to form
       if (data.title) form.setValue("title", data.title);
@@ -186,7 +187,10 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
           </div>
           <Button
             type="button"
-            onClick={onClose}
+            onClick={() => {
+              onClose();
+              form.reset();
+            }}
             className="flex h-7 w-7 items-center justify-center rounded-lg text-primary-foreground transition-colors hover:bg-primary hover:text-accent-foreground"
           >
             <X size={15} />
