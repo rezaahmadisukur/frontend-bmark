@@ -62,46 +62,13 @@ async function fetchMockMetadata(url: string): Promise<BookmarkMetadata> {
     }
   })();
 
-  // Return domain-based mock data
-  if (domain.includes("nextjs")) {
-    return {
-      title: "Next.js Documentation",
-      description:
-        "The React framework for the web. Build high-quality applications with the power of React components.",
-      image: "https://nextjs.org/static/twitter-cards/home.jpg",
-      favicon: "https://nextjs.org/favicon.ico",
-      tags: ["nextjs", "react", "frontend"]
-    };
-  }
-  if (domain.includes("github")) {
-    return {
-      title: "GitHub Repository",
-      description:
-        "Build and ship software on the world's largest development platform.",
-      image:
-        "https://github.githubassets.com/images/modules/site/social-cards/github-social.png",
-      favicon: "https://github.com/favicon.ico",
-      tags: ["git", "open-source"]
-    };
-  }
-  if (domain.includes("react") || domain.includes("reactjs")) {
-    return {
-      title: "React – A JavaScript library for building user interfaces",
-      description:
-        "React makes it painless to create interactive UIs. Design simple views for each state in your application.",
-      image: "https://reactjs.org/logo-og.png",
-      favicon: "https://reactjs.org/favicon.ico",
-      tags: ["react", "javascript", "frontend"]
-    };
-  }
-
   const brandName = domain.replace(/^www\./, "").split(".")[0];
 
   const title = brandName.charAt(0).toUpperCase() + brandName.slice(1);
 
   return {
-    // ...MOCK_METADATA.default,
     title: title,
+    image: `https://image.thum.io/get/width/400/crop/400/https://${domain}`,
     favicon: `https://${domain}/favicon.ico`
   };
 }
@@ -325,7 +292,8 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
                           height={144}
                           src={metadata.image}
                           alt=""
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-contain"
+                          unoptimized
                           onError={(e) => {
                             (e.target as HTMLImageElement).style.display =
                               "none";
