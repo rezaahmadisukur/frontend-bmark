@@ -95,9 +95,13 @@ async function fetchMockMetadata(url: string): Promise<BookmarkMetadata> {
     };
   }
 
+  const brandName = domain.replace(/^www\./, "").split(".")[0];
+
+  const title = brandName.charAt(0).toUpperCase() + brandName.slice(1);
+
   return {
     // ...MOCK_METADATA.default,
-    title: `${domain} — Developer Resource`,
+    title: title,
     favicon: `https://${domain}/favicon.ico`
   };
 }
