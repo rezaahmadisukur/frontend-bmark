@@ -51,29 +51,6 @@ type AddBookmarkModalProps = {
   onClose: () => void;
 };
 
-// async function fetchMockMetadata(url: string): Promise<BookmarkMetadata> {
-//   // Simulate network delay (1.5s)
-//   await new Promise((r) => setTimeout(r, 1500));
-
-//   const domain = (() => {
-//     try {
-//       return new URL(url).hostname;
-//     } catch {
-//       return "";
-//     }
-//   })();
-
-//   const brandName = domain.replace(/^www\./, "").split(".")[0];
-
-//   const title = brandName.charAt(0).toUpperCase() + brandName.slice(1);
-
-//   return {
-//     title: title,
-//     image: `https://image.thum.io/get/width/400/crop/400/https://${domain}`,
-//     favicon: `https://${domain}/favicon.ico`
-//   };
-// }
-
 function LoadingSkeleton() {
   return (
     <div className="space-y-4 rounded-xl border border-zinc-700/60 bg-zinc-800/50 p-4">
