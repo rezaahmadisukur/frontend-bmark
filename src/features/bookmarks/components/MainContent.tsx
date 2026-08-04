@@ -7,6 +7,7 @@ import { Loader2 } from "lucide-react";
 import { useBookmarkFilters } from "../hooks/use-bookmark-filters";
 import { useState } from "react";
 import { Bookmark } from "~/types/api";
+import EditBookmarkModal from "./EditBookmarkModal";
 
 const MainContent = () => {
   const { data: bookmarks, isLoading, error } = useGetBookmarks();
@@ -15,6 +16,8 @@ const MainContent = () => {
   const [bookmarkToDelete, setBookmarkToDelete] = useState<Bookmark | null>(
     null
   );
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [bookmarkToEdit, setBookmarkToEdit] = useState<Bookmark | null>(null);
 
   const handleDeleteClick = (bookmark: Bookmark) => {
     setBookmarkToDelete(bookmark);
@@ -24,6 +27,16 @@ const MainContent = () => {
   const handleDeleteModalClose = () => {
     setIsDeleteModalOpen(false);
     setBookmarkToDelete(null);
+  };
+
+  const handleEditClick = (bookmark: Bookmark) => {
+    setBookmarkToEdit(bookmark);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditModalClose = () => {
+    setIsEditModalOpen(false);
+    setBookmarkToEdit(null);
   };
 
   const filteredBookmarks = bookmarks?.filter((b) => {
@@ -77,10 +90,17 @@ const MainContent = () => {
             key={bookmark.id}
             bookmark={bookmark}
             viewMode="grid"
+            onEditClick={handleEditClick}
             onDeleteClick={handleDeleteClick}
           />
         ))}
       </div>
+
+      <EditBookmarkModal
+        isOpen={isEditModalOpen}
+        onClose={handleEditModalClose}
+        bookmark={bookmarkToEdit}
+      />
 
       <DeleteBookmarkModal
         isOpen={isDeleteModalOpen}
