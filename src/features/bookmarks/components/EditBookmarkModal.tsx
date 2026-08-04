@@ -50,7 +50,7 @@ type BookmarkMetadata = {
 type EditBookmarkModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  bookmark: Bookmark | null; // bookmark yang mau dihapus
+  bookmark: Bookmark | null; // bookmark yang mau diedit
 };
 
 function LoadingSkeleton() {
@@ -99,6 +99,9 @@ const EditBookmarkModal = ({
   const [fetchState, setFetchState] = useState<FetchState>("idle");
   const [metadata, setMetadata] = useState<BookmarkMetadata | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const previewData = metadata ?? bookmark;
+  const showPreview =
+    fetchState === "success" || (bookmark !== null && fetchState === "idle");
 
   // Auto focus input when Modal opened
   useEffect(() => {
@@ -120,16 +123,19 @@ const EditBookmarkModal = ({
   useEffect(() => {
     if (isOpen && bookmark) {
       form.reset({
+        url: bookmark.url,
         title: bookmark.title,
         description: bookmark.description,
+        image: bookmark.image,
+        favicon: bookmark.favicon,
         collectionId: bookmark.collectionId
       });
     }
   }, [isOpen, bookmark, form]);
 
   const handleFetch = async () => {
-    const urlValue = form.getValues("url");
-    if (!urlValue.trim()) return;
+    const urlValue = form.getValues("url") ?? "";
+    if (!urlValue?.trim()) return;
     setFetchState("loading");
     setMetadata(null);
     try {
@@ -178,7 +184,7 @@ const EditBookmarkModal = ({
               <Link2 size={14} className="text-primary" />
             </div>
             <h2 className="text-sm font-semibold text-foreground">
-              Add New Bookmark
+              Edit Bookmark
             </h2>
           </div>
           <Button
@@ -278,7 +284,7 @@ const EditBookmarkModal = ({
               )}
 
               {/* Success - Preview Card */}
-              {fetchState === "success" && metadata && (
+              {showPreview && previewData && (
                 <>
                   <div className="flex items-center gap-1.5 text-xs text-primary">
                     <CheckCircle2 size={13} />
@@ -287,7 +293,7 @@ const EditBookmarkModal = ({
 
                   {/* Preview Card */}
                   <div className="overflow-hidden rounded-xl border border-border bg-muted">
-                    {metadata.image && (
+                    {metadata?.image && (
                       <div className="relative h-36 bg-muted">
                         <Image
                           width={144}
@@ -447,7 +453,7 @@ const EditBookmarkModal = ({
                       Saving...
                     </>
                   ) : (
-                    "Save Bookmark"
+                    "Update Bookmark"
                   )}
                 </Button>
               </div>
