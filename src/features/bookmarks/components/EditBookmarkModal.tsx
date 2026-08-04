@@ -293,12 +293,12 @@ const EditBookmarkModal = ({
 
                   {/* Preview Card */}
                   <div className="overflow-hidden rounded-xl border border-border bg-muted">
-                    {metadata?.image && (
+                    {previewData?.image && (
                       <div className="relative h-36 bg-muted">
                         <Image
                           width={144}
                           height={144}
-                          src={metadata.image}
+                          src={previewData.image}
                           alt=""
                           className="w-full h-full object-contain"
                           unoptimized
@@ -317,9 +317,6 @@ const EditBookmarkModal = ({
                         control={form.control}
                         render={({ field, fieldState }) => (
                           <Field data-invalid={fieldState.invalid}>
-                            {/* <FieldLabel htmlFor={field.name}>
-                              Title <span>(optional)</span>
-                            </FieldLabel> */}
                             <Input
                               type="text"
                               id={field.name}
@@ -342,9 +339,6 @@ const EditBookmarkModal = ({
                         control={form.control}
                         render={({ field, fieldState }) => (
                           <Field data-invalid={fieldState.invalid}>
-                            {/* <FieldLabel htmlFor={field.name}>
-                              Description
-                            </FieldLabel> */}
                             <Textarea
                               id={field.name}
                               placeholder="A fantastic resource for developers..."
@@ -408,7 +402,7 @@ const EditBookmarkModal = ({
                     <FieldLabel>Tags (optional)</FieldLabel>
                     {fetchState === "success" && metadata?.tags && (
                       <div className="flex flex-wrap gap-1.5 mb-2">
-                        {metadata.tags.map((tag) => (
+                        {metadata?.tags?.map((tag) => (
                           <span
                             key={tag}
                             className="rounded-md bg-primary/20 px-2 py-0.5 text-[11px] font-medium text-primary"
