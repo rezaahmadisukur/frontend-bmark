@@ -6,10 +6,14 @@ import { Bookmark } from "~/types/api";
 import { z } from "zod";
 
 export const updateBookmarkInputSchema = z.object({
+  url: z.string().optional(),
   title: z.string().optional(),
   description: z.string().optional(),
+  image: z.string().optional(),
+  favicon: z.string().optional(),
   isFavorite: z.boolean().optional(),
-  collectionId: z.string().optional()
+  collectionId: z.string().optional(),
+  tags: z.array(z.string()).optional()
 });
 
 export type UpdateBookmarkInput = z.infer<typeof updateBookmarkInputSchema>;
