@@ -6,12 +6,13 @@ import {
   ExternalLink,
   Globe,
   MoreHorizontal,
+  Pen,
   Star,
   Trash2
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import { Activity } from "../../../components/partials/Activity";
 import { cn } from "~/lib/utils";
 import { Bookmark } from "~/types/api";
@@ -21,6 +22,7 @@ import { useBookmarkFilters } from "../hooks/use-bookmark-filters";
 interface BookmarkCardProps {
   bookmark: Bookmark;
   viewMode: "grid" | "list";
+  onEditClick: (bookmark: Bookmark) => void;
   onDeleteClick: (bookmark: Bookmark) => void;
 }
 
@@ -104,6 +106,7 @@ function OGImage({ src, alt }: { src: string; alt: string }) {
 const BookmarkCard = ({
   bookmark,
   viewMode,
+  onEditClick,
   onDeleteClick
 }: BookmarkCardProps) => {
   const updateBookmark = useUpdateBookmark();
@@ -128,6 +131,13 @@ const BookmarkCard = ({
         isFavorite: !bookmark.isFavorite
       }
     });
+  };
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setMenuOpen(false);
+    onEditClick(bookmark);
   };
 
   const handleDelete = (e: React.MouseEvent) => {
@@ -313,6 +323,16 @@ const BookmarkCard = ({
                   </button>
                   <button
                     onClick={(e) => {
+                      handleEdit(e);
+                      setMenuOpen(false);
+                    }}
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs text-popover-foreground hover:bg-accent"
+                  >
+                    <Pen size={12} />
+                    Edit
+                  </button>
+                  <button
+                    onClick={(e) => {
                       handleDelete(e);
                       setMenuOpen(false);
                     }}
@@ -326,7 +346,7 @@ const BookmarkCard = ({
             )}
 
             {bookmark.isFavorite && (
-              <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-accent/20 px-2 py-0.5 backdrop-blur-sm">
+              <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-accent/80 px-2 py-0.5 backdrop-blur-sm">
                 <Star size={10} className="fill-amber-400 text-amber-400" />
                 <span className="text-[10px] font-medium text-amber-300">
                   Favorite
