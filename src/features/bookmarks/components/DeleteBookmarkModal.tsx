@@ -29,9 +29,7 @@ const DeleteBookmarkModal = ({
   const deleteBookmark = useDeleteBookmark();
   const [confirmText, setConfirmText] = useState("");
 
-  const isConfirmMatch =
-    confirmText.trim().toLowerCase() ===
-    (bookmark?.title ?? "").trim().toLowerCase();
+  const isConfirmMatch = confirmText.trim() === "Delete";
 
   const handleDelete = () => {
     if (!bookmark || !isConfirmMatch) return;
@@ -72,44 +70,47 @@ const DeleteBookmarkModal = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-2">
-          <p className="text-xs text-muted-foreground">
-            Please type{" "}
-            <span className="font-semibold text-foreground">
-              {bookmark?.title}
-            </span>{" "}
-            to confirm:
-          </p>
-          <Input
-            type="text"
-            value={confirmText}
-            onChange={(e) => setConfirmText(e.target.value)}
-            placeholder={bookmark?.title}
-            autoFocus
-            autoComplete="off"
-          />
-        </div>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleDelete();
+          }}
+        >
+          <div className="space-y-2">
+            <p className="text-xs text-muted-foreground">
+              Type <span className="font-semibold text-foreground">Delete</span>{" "}
+              to confirm:
+            </p>
+            <Input
+              type="text"
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+              placeholder="Delete"
+              autoFocus
+              autoComplete="off"
+            />
+          </div>
 
-        <DialogFooter>
-          <Button type="button" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button
-            type="button"
-            onClick={handleDelete}
-            disabled={!isConfirmMatch || deleteBookmark.isPending}
-            className="bg-destructive hover:bg-destructive"
-          >
-            {deleteBookmark.isPending ? (
-              <>
-                <Loader2 size={13} className="animate-spin" />
-                Deleting...
-              </>
-            ) : (
-              "Delete this bookmark"
-            )}
-          </Button>
-        </DialogFooter>
+          <DialogFooter className="mt-8">
+            <Button type="button" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={!isConfirmMatch || deleteBookmark.isPending}
+              className="bg-destructive hover:bg-destructive"
+            >
+              {deleteBookmark.isPending ? (
+                <>
+                  <Loader2 size={13} className="animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
+            </Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );
