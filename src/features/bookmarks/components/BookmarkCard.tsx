@@ -12,9 +12,10 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { Activity } from "../../../components/partials/Activity";
 import { cn } from "~/lib/utils";
+import { Button } from "~/components/ui/button";
 import { Bookmark } from "~/types/api";
 import { useUpdateBookmark } from "../api/update-bookmark";
 import { useBookmarkFilters } from "../hooks/use-bookmark-filters";
@@ -113,6 +114,7 @@ const BookmarkCard = ({
   const [copied, setCopied] = useState<boolean>(false);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [timeAgo, setTimeAgo] = useState("");
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -170,6 +172,21 @@ const BookmarkCard = ({
     const interval = setInterval(update, 60_000);
     return () => clearInterval(interval);
   }, [bookmark.createdAt]);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+
+    if (menuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [menuOpen]);
 
   return (
     <Fragment>
@@ -266,11 +283,11 @@ const BookmarkCard = ({
             <OGImage src={bookmark.image || ""} alt={bookmark.title} />
             <div className="absolute inset-0 bg-linear-to-t from-card/80 via-transparent to-transparent" />
 
-            <div className="absolute right-2 top-2 flex items-center gap-1.5 opacity-0 transition-all duration-200 group-hover:opacity-100">
+            <div className="absolute right-2 top-2 flex items-center gap-1.5 opacity-100 transition-all duration-200">
               <button
                 onClick={handleCopy}
                 title="Copy link"
-                className="flex h-7 w-7 items-center justify-center rounded-lg bg-background/90 text-muted-foreground backdrop-blur-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+                className="flex h-7 w-7 items-center justify-center rounded-lg bg-background/90 text-muted-foreground backdrop-blur-sm transition-colors hover:bg-accent hover:text-accent-foreground cursor-pointer"
               >
                 {copied ? (
                   <Check size={12} className="text-primary" />
@@ -287,63 +304,65 @@ const BookmarkCard = ({
               >
                 <ExternalLink size={12} />
               </Link>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setMenuOpen((o) => !o);
-                }}
-                className="flex h-7 w-7 items-center justify-center rounded-lg bg-background/90 text-muted-foreground backdrop-blur-sm transition-colors hover:bg-accent hover:text-accent-foreground"
-              >
-                <MoreHorizontal size={12} />
-              </button>
-            </div>
+              <div ref={menuRef} className="relative">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setMenuOpen((o) => !o);
+                  }}
+                  className="flex h-7 w-7 items-center justify-center rounded-lg bg-background/90 text-muted-foreground backdrop-blur-sm transition-colors hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                >
+                  <MoreHorizontal size={12} />
+                </button>
 
-            {menuOpen && (
-              <div
-                className="absolute right-2 top-10 z-50 min-w-35 overflow-hidden rounded-xl border border-border bg-popover shadow-2xl shadow-black/50"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="p-1">
-                  <button
-                    onClick={(e) => {
-                      handleFavorite(e);
-                      setMenuOpen(false);
-                    }}
-                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs text-popover-foreground hover:bg-accent"
+                {menuOpen && (
+                  <div
+                    className="absolute right-0 top-9 z-50 min-w-35 overflow-hidden rounded-xl border border-border bg-popover shadow-2xl shadow-black/50"
+                    onClick={(e) => e.stopPropagation()}
                   >
-                    <Star
-                      size={12}
-                      className={
-                        bookmark.isFavorite
-                          ? "fill-amber-400 text-amber-400"
-                          : ""
-                      }
-                    />
-                    {bookmark.isFavorite ? "Unfavorite" : "Add to Favorites"}
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      handleEdit(e);
-                      setMenuOpen(false);
-                    }}
-                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs text-popover-foreground hover:bg-accent"
-                  >
-                    <Pen size={12} />
-                    Edit
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      handleDelete(e);
-                      setMenuOpen(false);
-                    }}
-                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs text-popover-foreground hover:bg-accent"
-                  >
-                    <Trash2 size={12} />
-                    Delete
-                  </button>
-                </div>
+                    <div className="p-1">
+                      <button
+                        onClick={(e) => {
+                          handleFavorite(e);
+                          setMenuOpen(false);
+                        }}
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs text-popover-foreground hover:bg-accent"
+                      >
+                        <Star
+                          size={12}
+                          className={
+                            bookmark.isFavorite
+                              ? "fill-amber-400 text-amber-400"
+                              : ""
+                          }
+                        />
+                        {bookmark.isFavorite ? "Unfavorite" : "Favorite"}
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          handleEdit(e);
+                          setMenuOpen(false);
+                        }}
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs text-popover-foreground hover:bg-accent"
+                      >
+                        <Pen size={12} />
+                        Edit
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          handleDelete(e);
+                          setMenuOpen(false);
+                        }}
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs text-popover-foreground hover:bg-accent"
+                      >
+                        <Trash2 size={12} />
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
 
             {bookmark.isFavorite && (
               <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-accent/80 px-2 py-0.5 backdrop-blur-sm">
@@ -389,6 +408,18 @@ const BookmarkCard = ({
                 </span>
               )}
             </div>
+
+            <Button asChild size="sm" variant="outline" className="mt-3 w-full">
+              <Link
+                href={bookmark.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ExternalLink size={14} />
+                Visit Link
+              </Link>
+            </Button>
           </div>
         </div>
       </Activity>
