@@ -137,6 +137,8 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
       {
         onSuccess: () => {
           form.reset();
+          setMetadata(null);
+          setFetchState("idle");
           onClose();
         }
       }
@@ -167,6 +169,8 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
             onClick={() => {
               onClose();
               form.reset();
+              setMetadata(null);
+              setFetchState("idle");
             }}
             className="flex h-7 w-7 items-center justify-center rounded-lg text-primary-foreground transition-colors hover:bg-primary hover:text-accent-foreground"
           >
