@@ -326,7 +326,7 @@ const BookmarkCard = ({
                           handleFavorite(e);
                           setMenuOpen(false);
                         }}
-                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs text-popover-foreground hover:bg-accent"
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs text-popover-foreground hover:text-accent-foreground hover:bg-accent"
                       >
                         <Star
                           size={12}
@@ -343,7 +343,7 @@ const BookmarkCard = ({
                           handleEdit(e);
                           setMenuOpen(false);
                         }}
-                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs text-popover-foreground hover:bg-accent"
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs text-popover-foreground hover:text-accent-foreground hover:bg-accent"
                       >
                         <Pen size={12} />
                         Edit
@@ -353,7 +353,7 @@ const BookmarkCard = ({
                           handleDelete(e);
                           setMenuOpen(false);
                         }}
-                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs text-popover-foreground hover:bg-accent"
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs text-popover-foreground hover:text-accent-foreground hover:bg-accent"
                       >
                         <Trash2 size={12} />
                         Delete
