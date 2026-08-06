@@ -16,7 +16,7 @@ import { Activity } from "./Activity";
 import { useApp } from "~/context/AppContext";
 import { ALL_TAGS } from "~/data/mockData";
 import { cn } from "~/lib/utils";
-import type { Bookmark as BookmarkType } from "~/types";
+import type { Bookmark as BookmarkType } from "~/types/api";
 
 type ResultItem =
   | { type: "bookmark"; data: BookmarkType }
@@ -86,7 +86,7 @@ const CommandPalette = () => {
         (b) =>
           b.title.toLowerCase().includes(q) ||
           b.description.toLowerCase().includes(q) ||
-          b.tags.some((t) => t.includes(q)) ||
+          b.tags?.some((t) => t.tag.name.toLowerCase().includes(q)) ||
           b.url.includes(q)
       )
       .slice(0, 5)
