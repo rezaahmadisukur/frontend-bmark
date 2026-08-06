@@ -17,6 +17,9 @@ import {
 import { useApp } from "~/context/AppContext";
 import { cn } from "~/lib/utils";
 import { Collection } from "~/types";
+import { useBookmarkFilters } from "~/features/bookmarks/hooks/use-bookmark-filters";
+import { useGetBookmarks } from "~/features/bookmarks/api/get-bookmarks";
+import { useGetCollections } from "~/features/collections/api/get-collections";
 
 const ICON_MAP: Record<
   string,
@@ -88,22 +91,22 @@ function NavItem({ label, icon, active, count, onClick }: NavItemProps) {
 }
 
 function CollectionItem({ collection }: { collection: Collection }) {
-  const { filters, setFilters, bookmarks } = useApp();
+  const { filters, setFilters } = useBookmarkFilters();
+  const { data: bookmarks } = useGetBookmarks();
   const isActive = filters.collectionId === collection.id;
-  const count = bookmarks.filter(
-    (b) => b.collectionId === collection.id
-  ).length;
+  const count =
+    bookmarks?.filter((b) => b.collectionId === collection.id).length ?? 0;
 
   return (
     <button
       onClick={() =>
-        setFilters((f) => ({
-          ...f,
-          collectionId: isActive ? null : collection.id,
+        setFilters({
+          ...filters,
+          collectionId: isActive ? "" : collection.id,
           showFavorites: false,
           showRecent: false,
-          tag: null
-        }))
+          tag: ""
+        })
       }
       className={cn(
         "group flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-all duration-150",
@@ -116,7 +119,7 @@ function CollectionItem({ collection }: { collection: Collection }) {
         className="flex h-5 w-5 shrink-0 items-center justify-center rounded"
         style={{ color: collection.color }}
       >
-        <CollectionIcon name={collection.icon} />
+        <CollectionIcon name={collection.icon ?? "Layers"} />
       </span>
       <span className="flex-1 truncate text-left">{collection.name}</span>
       <span
@@ -143,28 +146,25 @@ function CollectionItem({ collection }: { collection: Collection }) {
 }
 
 const Sidebar = () => {
-  const {
-    filters,
-    setFilters,
-    bookmarks,
-    collections,
-    sidebarOpen,
-    setSidebarOpen
-  } = useApp();
+  const { sidebarOpen, setSidebarOpen } = useApp();
+  const { filters, setFilters } = useBookmarkFilters();
+  const { data: bookmarks } = useGetBookmarks();
+  const { data: collections } = useGetCollections();
 
-  const allCount = bookmarks.length;
-  const recentCount = bookmarks.filter((b) => {
-    const weekAgo = new Date();
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    return b.createdAt >= weekAgo;
-  }).length;
-  const favCount = bookmarks.filter((b) => b.isFavorite).length;
+  const allCount = bookmarks?.length ?? 0;
+  const recentCount =
+    bookmarks?.filter((b) => {
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
+      return new Date(b.createdAt) >= weekAgo;
+    }).length ?? 0;
+  const favCount = bookmarks?.filter((b) => b.isFavorite).length ?? 0;
 
   const resetFilters = (overrides: Partial<typeof filters>) => {
     setFilters({
-      collectionId: null,
-      tag: null,
       search: "",
+      tag: "",
+      collectionId: "",
       showFavorites: false,
       showRecent: false,
       ...overrides
@@ -255,7 +255,7 @@ const Sidebar = () => {
               </button>
             </div>
             <div className="flex flex-col gap-0.5">
-              {collections.map((c) => (
+              {collections?.map((c) => (
                 <CollectionItem key={c.id} collection={c} />
               ))}
             </div>
