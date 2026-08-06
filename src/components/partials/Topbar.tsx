@@ -13,7 +13,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { useApp } from "~/context/AppContext";
 import { cn } from "~/lib/utils";
-import { SortMode } from "~/types";
+import { SortMode } from "~/types/api";
 import { Activity } from "./Activity";
 import { useBookmarkFilters } from "~/features/bookmarks/hooks/use-bookmark-filters";
 import { useGetBookmarks } from "~/features/bookmarks/api/get-bookmarks";
