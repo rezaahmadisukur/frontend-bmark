@@ -8,7 +8,13 @@ import {
   useState
 } from "react";
 import { BOOKMARKS, COLLECTIONS } from "~/data/mockData";
-import { Bookmark, Collection, FilterState, SortMode, ViewMode } from "~/types";
+import {
+  Bookmark,
+  Collection,
+  FilterState,
+  SortMode,
+  ViewMode
+} from "~/types/api";
 
 interface AppContextType {
   // Data
@@ -84,7 +90,7 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
         (b) =>
           b.title.toLowerCase().includes(q) ||
           b.description.toLowerCase().includes(q) ||
-          b.tags.some((t) => t.toLowerCase().includes(q)) ||
+          b.tags?.some((t) => t.tag.name.toLowerCase().includes(q)) ||
           b.url.toLowerCase().includes(q)
       );
     }
@@ -108,7 +114,9 @@ export const AppProvider = ({ children }: { children: React.ReactNode }) => {
 
     // Filter by tag
     if (filters.tag) {
-      result = result.filter((b) => b.tags.includes(filters.tag!));
+      result = result.filter((b) =>
+        b.tags?.some((t) => t.tag.name === filters.tag)
+      );
     }
 
     // Sort
