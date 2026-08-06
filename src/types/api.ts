@@ -31,8 +31,20 @@ export type Collection = {
   name: string;
   description: string;
   color: string;
+  icon?: string; // Lucide icon name
   parentId: string;
   createdAt: string;
   updatedAt: string;
   userId: string;
 };
+
+export interface FilterState {
+  collectionId: string | null;
+  tag: string | null;
+  search: string;
+  showFavorites: boolean;
+  showRecent: boolean;
+}
+
+export type ViewMode = "grid" | "list";
+export type SortMode = "newest" | "oldest" | "az";
