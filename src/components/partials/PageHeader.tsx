@@ -13,7 +13,9 @@ import {
   Hash,
   type LucideProps
 } from "lucide-react";
-import { useApp } from "~/context/AppContext";
+import { useBookmarkFilters } from "~/features/bookmarks/hooks/use-bookmark-filters";
+import { useGetBookmarks } from "~/features/bookmarks/api/get-bookmarks";
+import { useGetCollections } from "~/features/collections/api/get-collections";
 
 type IconComponent = React.ComponentType<LucideProps>;
 
@@ -32,7 +34,9 @@ function CollectionIcon({ name, color }: { name: string; color: string }) {
 }
 
 const PageHeader = () => {
-  const { filters, bookmarks, collections, filteredBookmarks } = useApp();
+  const { filters } = useBookmarkFilters();
+  const { data: bookmarks } = useGetBookmarks();
+  const { data: collections } = useGetCollections();
 
   const getTitle = () => {
     if (filters.showFavorites)
@@ -48,12 +52,12 @@ const PageHeader = () => {
       };
 
     if (filters.collectionId) {
-      const col = collections.find((c) => c.id === filters.collectionId);
+      const col = collections?.find((c) => c.id === filters.collectionId);
 
       if (col)
         return {
           label: col.name,
-          icon: <CollectionIcon name={col.icon} color={col.color} />
+          icon: <CollectionIcon name={col.icon ?? "Layers"} color={col.color} />
         };
     }
 
@@ -73,17 +77,21 @@ const PageHeader = () => {
 
   const totalCount = (() => {
     if (filters.showFavorites)
-      return bookmarks.filter((b) => b.isFavorite).length;
+      return bookmarks?.filter((b) => b.isFavorite).length ?? 0;
     if (filters.showRecent) {
       const weekAgo = new Date();
       weekAgo.setDate(weekAgo.getDate() - 7);
-      return bookmarks.filter((b) => b.createdAt >= weekAgo).length;
+      return (
+        bookmarks?.filter((b) => new Date(b.createdAt) >= weekAgo).length ?? 0
+      );
     }
     if (filters.collectionId)
-      return bookmarks.filter((b) => b.collectionId === filters.collectionId)
-        .length;
+      return (
+        bookmarks?.filter((b) => b.collectionId === filters.collectionId)
+          .length ?? 0
+      );
 
-    return bookmarks.length;
+    return bookmarks?.length ?? 0;
   })();
 
   return (
@@ -96,7 +104,7 @@ const PageHeader = () => {
         <p className="text-xs text-muted-foreground">
           {totalCount} bookmark{totalCount !== 1 ? "s" : ""}
           {filters.search &&
-            ` · ${filteredBookmarks.length} result${filteredBookmarks.length !== 1 ? "s" : ""}`}
+            ` · ${totalCount} result${totalCount !== 1 ? "s" : ""}`}
         </p>
       </div>
     </div>
