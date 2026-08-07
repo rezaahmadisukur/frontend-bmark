@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import {
   CreateCollectionInput,
   createCollectionInputSchema,
@@ -18,7 +18,6 @@ import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
 import { Textarea } from "~/components/ui/textarea";
 import { Activity } from "~/components/partials/Activity";
-import { useState } from "react";
 import { cn } from "~/lib/utils";
 
 const PRESET_COLORS = [
@@ -39,7 +38,6 @@ type AddCollectionModalProps = {
 
 const AddCollectionModal = ({ isOpen, onClose }: AddCollectionModalProps) => {
   const createCollection = useCreateCollection();
-  const [selectedColor, setSelectedColor] = useState(PRESET_COLORS[0]);
 
   const form = useForm<CreateCollectionInput>({
     resolver: zodResolver(createCollectionInputSchema),
@@ -52,11 +50,10 @@ const AddCollectionModal = ({ isOpen, onClose }: AddCollectionModalProps) => {
 
   const onSubmit = (data: CreateCollectionInput) => {
     createCollection.mutate(
-      { data: { ...data, color: selectedColor } },
+      { data },
       {
         onSuccess: () => {
           form.reset();
-          setSelectedColor(PRESET_COLORS[0]);
           onClose();
         }
       }
@@ -90,7 +87,6 @@ const AddCollectionModal = ({ isOpen, onClose }: AddCollectionModalProps) => {
             onClick={() => {
               onClose();
               form.reset();
-              setSelectedColor(PRESET_COLORS[0]);
             }}
             className="flex h-7 w-7 items-center justify-center rounded-lg text-primary-foreground transition-colors hover:bg-primary hover:text-accent-foreground"
           >
@@ -103,59 +99,91 @@ const AddCollectionModal = ({ isOpen, onClose }: AddCollectionModalProps) => {
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup className="gap-4">
               {/* Name Input */}
-              <Field>
-                <FieldLabel className="mb-1.5 block text-xs font-medium text-muted-foreground">
-                  Collection Name <span className="text-destructive">*</span>
-                </FieldLabel>
-                <Input
-                  type="text"
-                  placeholder="My Collection"
-                  {...form.register("name")}
-                  className="w-full rounded-xl border border-border py-2.5 px-3 text-sm outline-none"
-                />
-                <Activity
-                  mode={form.formState.errors.name ? "visible" : "hidden"}
-                >
-                  <FieldError errors={[form.formState.errors.name]} />
-                </Activity>
-              </Field>
+              <Controller
+                name="name"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel
+                      htmlFor={field.name}
+                      className="mb-1.5 block text-xs font-medium text-muted-foreground"
+                    >
+                      Collection Name{" "}
+                      <span className="text-destructive">*</span>
+                    </FieldLabel>
+                    <Input
+                      type="text"
+                      id={field.name}
+                      placeholder="My Collection"
+                      aria-invalid={fieldState.invalid}
+                      {...field}
+                      className="w-full rounded-xl border border-border py-2.5 px-3 text-sm outline-none"
+                    />
+                    <Activity mode={fieldState.invalid ? "visible" : "hidden"}>
+                      <FieldError errors={[fieldState.error]} />
+                    </Activity>
+                  </Field>
+                )}
+              />
 
               {/* Description Input */}
-              <Field>
-                <FieldLabel className="mb-1.5 block text-xs font-medium text-muted-foreground">
-                  Description{" "}
-                  <span className="text-muted-foreground/60">(optional)</span>
-                </FieldLabel>
-                <Textarea
-                  placeholder="A short description..."
-                  rows={2}
-                  {...form.register("description")}
-                  className="w-full resize-none rounded-xl border border-border py-2.5 px-3 text-sm outline-none"
-                />
-              </Field>
+              <Controller
+                name="description"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel
+                      htmlFor={field.name}
+                      className="mb-1.5 block text-xs font-medium text-muted-foreground"
+                    >
+                      Description{" "}
+                      <span className="text-muted-foreground/60">
+                        (optional)
+                      </span>
+                    </FieldLabel>
+                    <Textarea
+                      id={field.name}
+                      placeholder="A short description..."
+                      rows={2}
+                      aria-invalid={fieldState.invalid}
+                      {...field}
+                      className="w-full resize-none rounded-xl border border-border py-2.5 px-3 text-sm outline-none"
+                    />
+                    <Activity mode={fieldState.invalid ? "visible" : "hidden"}>
+                      <FieldError errors={[fieldState.error]} />
+                    </Activity>
+                  </Field>
+                )}
+              />
 
               {/* Color Picker */}
-              <Field>
-                <FieldLabel className="mb-2 block text-xs font-medium text-muted-foreground">
-                  Color
-                </FieldLabel>
-                <div className="flex flex-wrap gap-2">
-                  {PRESET_COLORS.map((color) => (
-                    <button
-                      key={color}
-                      type="button"
-                      onClick={() => setSelectedColor(color)}
-                      className={cn(
-                        "h-8 w-8 rounded-lg border-2 transition-all",
-                        selectedColor === color
-                          ? "border-foreground scale-110"
-                          : "border-transparent hover:scale-105"
-                      )}
-                      style={{ backgroundColor: color }}
-                    />
-                  ))}
-                </div>
-              </Field>
+              <Controller
+                name="color"
+                control={form.control}
+                render={({ field }) => (
+                  <Field>
+                    <FieldLabel className="mb-2 block text-xs font-medium text-muted-foreground">
+                      Color
+                    </FieldLabel>
+                    <div className="flex flex-wrap gap-2">
+                      {PRESET_COLORS.map((color) => (
+                        <button
+                          key={color}
+                          type="button"
+                          onClick={() => field.onChange(color)}
+                          className={cn(
+                            "h-8 w-8 rounded-lg border-2 transition-all",
+                            field.value === color
+                              ? "border-foreground scale-110"
+                              : "border-transparent hover:scale-105"
+                          )}
+                          style={{ backgroundColor: color }}
+                        />
+                      ))}
+                    </div>
+                  </Field>
+                )}
+              />
 
               {/* Footer */}
               <div className="flex items-center justify-end gap-2 pt-2">
