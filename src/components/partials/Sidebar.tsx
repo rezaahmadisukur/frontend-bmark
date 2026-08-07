@@ -14,12 +14,14 @@ import {
   Layers,
   X
 } from "lucide-react";
+import { useState } from "react";
 import { useApp } from "~/context/AppContext";
 import { cn } from "~/lib/utils";
 import { Collection } from "~/types/api";
 import { useBookmarkFilters } from "~/features/bookmarks/hooks/use-bookmark-filters";
 import { useGetBookmarks } from "~/features/bookmarks/api/get-bookmarks";
 import { useGetCollections } from "~/features/collections/api/get-collections";
+import AddCollectionModal from "~/features/collections/components/AddCollectionModal";
 
 const ICON_MAP: Record<
   string,
@@ -156,6 +158,7 @@ const Sidebar = () => {
   const { filters, setFilters } = useBookmarkFilters();
   const { data: bookmarks } = useGetBookmarks();
   const { data: collections } = useGetCollections();
+  const [isAddCollectionOpen, setIsAddCollectionOpen] = useState(false);
 
   const allCount = bookmarks?.length ?? 0;
   const recentCount =
@@ -256,7 +259,10 @@ const Sidebar = () => {
               <span className="text-[11px] font-semibold uppercase tracking-widest text-sidebar-foreground/60">
                 Collections
               </span>
-              <button className="flex h-5 w-5 items-center justify-center rounded text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors">
+              <button
+                onClick={() => setIsAddCollectionOpen(true)}
+                className="flex h-5 w-5 items-center justify-center rounded text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-colors"
+              >
                 <Plus size={12} />
               </button>
             </div>
@@ -285,6 +291,12 @@ const Sidebar = () => {
           </div>
         </div>
       </aside>
+
+      {/* Add Collection Modal */}
+      <AddCollectionModal
+        isOpen={isAddCollectionOpen}
+        onClose={() => setIsAddCollectionOpen(false)}
+      />
     </>
   );
 };
