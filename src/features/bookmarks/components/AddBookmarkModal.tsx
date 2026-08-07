@@ -92,9 +92,7 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
   });
   const [fetchState, setFetchState] = useState<FetchState>("idle");
   const [metadata, setMetadata] = useState<BookmarkMetadata | null>(null);
-  // const [customTags, setCustomTags] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
-  // const [tagInput, setTagInput] = useState("");
 
   // Auto focus input when Modal opened
   useEffect(() => {
