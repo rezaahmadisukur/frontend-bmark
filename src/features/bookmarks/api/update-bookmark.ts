@@ -12,7 +12,7 @@ export const updateBookmarkInputSchema = z.object({
   image: z.string().optional(),
   favicon: z.string().optional(),
   isFavorite: z.boolean().optional(),
-  collectionId: z.string().optional(),
+  collectionId: z.string().nullable().optional(),
   tags: z.array(z.string()).optional()
 });
 
