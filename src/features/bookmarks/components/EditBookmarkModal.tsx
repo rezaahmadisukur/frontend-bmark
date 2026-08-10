@@ -6,6 +6,7 @@ import {
   updateBookmarkInputSchema,
   useUpdateBookmark
 } from "../api/update-bookmark";
+import { useGetBookmarkById } from "../api/get-bookmark-by-id";
 import {
   AlertCircle,
   CheckCircle2,
@@ -93,15 +94,26 @@ const EditBookmarkModal = ({
 }: EditBookmarkModalProps) => {
   const updateBookmark = useUpdateBookmark();
   const { data: collections } = useGetCollections();
+
+  // Fetch fresh bookmark data when modal opens
+  const { data: freshBookmark } = useGetBookmarkById({
+    input: { id: bookmark?.id ?? "" },
+    enabled: isOpen && !!bookmark?.id
+  });
+
+  // Use fresh data if available, fallback to prop
+  const editingBookmark = freshBookmark ?? bookmark;
+
   const form = useForm<UpdateBookmarkInput>({
     resolver: zodResolver(updateBookmarkInputSchema)
   });
   const [fetchState, setFetchState] = useState<FetchState>("idle");
   const [metadata, setMetadata] = useState<BookmarkMetadata | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const previewData = metadata ?? bookmark;
+  const previewData = metadata ?? editingBookmark;
   const showPreview =
-    fetchState === "success" || (bookmark !== null && fetchState === "idle");
+    fetchState === "success" ||
+    (editingBookmark !== null && fetchState === "idle");
 
   // Auto focus input when Modal opened
   useEffect(() => {
@@ -121,17 +133,17 @@ const EditBookmarkModal = ({
 
   // Pre-fill input for update bookmark
   useEffect(() => {
-    if (isOpen && bookmark) {
+    if (isOpen && editingBookmark) {
       form.reset({
-        url: bookmark.url,
-        title: bookmark.title,
-        description: bookmark.description,
-        image: bookmark.image,
-        favicon: bookmark.favicon,
-        collectionId: bookmark.collectionId
+        url: editingBookmark.url,
+        title: editingBookmark.title,
+        description: editingBookmark.description,
+        image: editingBookmark.image,
+        favicon: editingBookmark.favicon,
+        collectionId: editingBookmark.collectionId
       });
     }
-  }, [isOpen, bookmark, form]);
+  }, [isOpen, editingBookmark, form]);
 
   const handleFetch = async () => {
     const urlValue = form.getValues("url") ?? "";
@@ -153,10 +165,10 @@ const EditBookmarkModal = ({
   };
 
   const onSubmit = (data: UpdateBookmarkInput) => {
-    if (!bookmark) return;
+    if (!editingBookmark) return;
     updateBookmark.mutate(
       {
-        id: bookmark.id,
+        id: editingBookmark.id,
         data
       },
       {
@@ -371,12 +383,18 @@ const EditBookmarkModal = ({
                     >
                       Collection
                     </FieldLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
+                    <Select
+                      value={field.value ?? "none"}
+                      onValueChange={(v) =>
+                        field.onChange(v === "none" ? null : v)
+                      }
+                    >
                       <SelectTrigger className="w-full rounded-xl border border-border px-3 py-2.5 text-sm outline-none focus:ring-2">
-                        <SelectValue placeholder="Select a collection" />
+                        <SelectValue placeholder="Select a collection (optional)" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
+                          <SelectItem value="none">No Collection</SelectItem>
                           {collections?.map((col) => (
                             <SelectItem key={col.id} value={col.id}>
                               {col.name}
