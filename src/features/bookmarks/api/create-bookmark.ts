@@ -11,7 +11,7 @@ export const createBookmarkInputSchema = z.object({
   description: z.string().optional(),
   image: z.string().optional(),
   favicon: z.string().optional(),
-  collectionId: z.string().optional(),
+  collectionId: z.string().nullable().optional(),
   tags: z.array(z.string()).optional()
 });
 
