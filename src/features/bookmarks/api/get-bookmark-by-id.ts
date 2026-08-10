@@ -29,14 +29,17 @@ export const getBookmarkByIdQueryOptions = (input: GetBookmarkByIdInput) => {
 type UseGetBookmarkById = {
   queryConfig?: QueryConfig<typeof getBookmarkById>;
   input: GetBookmarkByIdInput;
+  enabled?: boolean;
 };
 
 export const useGetBookmarkById = ({
   queryConfig,
-  input
+  input,
+  enabled
 }: UseGetBookmarkById) => {
   return useQuery({
     ...getBookmarkByIdQueryOptions(input),
-    ...queryConfig
+    ...queryConfig,
+    enabled: enabled ?? true
   });
 };
