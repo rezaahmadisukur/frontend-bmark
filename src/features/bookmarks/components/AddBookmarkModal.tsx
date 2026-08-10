@@ -294,9 +294,6 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
                         control={form.control}
                         render={({ field, fieldState }) => (
                           <Field data-invalid={fieldState.invalid}>
-                            {/* <FieldLabel htmlFor={field.name}>
-                              Title <span>(optional)</span>
-                            </FieldLabel> */}
                             <Input
                               type="text"
                               id={field.name}
@@ -354,12 +351,18 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
                     >
                       Collection
                     </FieldLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
+                    <Select
+                      value={field.value ?? "none"}
+                      onValueChange={(v) =>
+                        field.onChange(v === "none" ? null : v)
+                      }
+                    >
                       <SelectTrigger className="w-full rounded-xl border border-border px-3 py-2.5 text-sm outline-none focus:ring-2">
-                        <SelectValue placeholder="Select a collection" />
+                        <SelectValue placeholder="Select a collection (optional)" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
+                          <SelectItem value="none">No Collection</SelectItem>
                           {collections?.map((col) => (
                             <SelectItem key={col.id} value={col.id}>
                               {col.name}
