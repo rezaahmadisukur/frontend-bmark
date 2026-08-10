@@ -9,7 +9,7 @@ import {
   Container,
   Palette,
   GraduationCap,
-  ChevronRight,
+  MoreHorizontal,
   Plus,
   Layers,
   X
@@ -22,6 +22,15 @@ import { useBookmarkFilters } from "~/features/bookmarks/hooks/use-bookmark-filt
 import { useGetBookmarks } from "~/features/bookmarks/api/get-bookmarks";
 import { useGetCollections } from "~/features/collections/api/get-collections";
 import AddCollectionModal from "~/features/collections/components/AddCollectionModal";
+import EditCollectionModal from "~/features/collections/components/EditCollectionModal";
+import DeleteCollectionModal from "~/features/collections/components/DeleteCollectionModal";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator
+} from "~/components/ui/dropdown-menu";
 
 const ICON_MAP: Record<
   string,
@@ -95,7 +104,15 @@ function NavItem({ label, icon, active, count, onClick }: NavItemProps) {
   );
 }
 
-function CollectionItem({ collection }: { collection: Collection }) {
+function CollectionItem({
+  collection,
+  onEdit,
+  onDelete
+}: {
+  collection: Collection;
+  onEdit: (collection: Collection) => void;
+  onDelete: (collection: Collection) => void;
+}) {
   const { filters, setFilters } = useBookmarkFilters();
   const { data: bookmarks } = useGetBookmarks();
   const isActive = filters.collectionId === collection.id;
@@ -140,15 +157,28 @@ function CollectionItem({ collection }: { collection: Collection }) {
       >
         {count}
       </span>
-      <ChevronRight
-        size={12}
-        className={cn(
-          "shrink-0 transition-transform",
-          isActive
-            ? "rotate-90 text-sidebar-foreground/70"
-            : "text-sidebar-foreground/40 group-hover:text-sidebar-foreground/50"
-        )}
-      />
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            onClick={(e) => e.stopPropagation()}
+            className="flex h-5 w-5 items-center justify-center rounded text-sidebar-foreground/40 opacity-0 group-hover:opacity-100 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-all"
+          >
+            <MoreHorizontal size={12} />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-40">
+          <DropdownMenuItem onClick={() => onEdit(collection)}>
+            Edit
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            variant="destructive"
+            onClick={() => onDelete(collection)}
+          >
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </button>
   );
 }
@@ -159,6 +189,11 @@ const Sidebar = () => {
   const { data: bookmarks } = useGetBookmarks();
   const { data: collections } = useGetCollections();
   const [isAddCollectionOpen, setIsAddCollectionOpen] = useState(false);
+  const [editingCollection, setEditingCollection] = useState<Collection | null>(
+    null
+  );
+  const [deletingCollection, setDeletingCollection] =
+    useState<Collection | null>(null);
 
   const allCount = bookmarks?.length ?? 0;
   const recentCount =
@@ -268,7 +303,12 @@ const Sidebar = () => {
             </div>
             <div className="flex flex-col gap-0.5">
               {collections?.map((c) => (
-                <CollectionItem key={c.id} collection={c} />
+                <CollectionItem
+                  key={c.id}
+                  collection={c}
+                  onEdit={(col) => setEditingCollection(col)}
+                  onDelete={(col) => setDeletingCollection(col)}
+                />
               ))}
             </div>
           </div>
@@ -296,6 +336,20 @@ const Sidebar = () => {
       <AddCollectionModal
         isOpen={isAddCollectionOpen}
         onClose={() => setIsAddCollectionOpen(false)}
+      />
+
+      {/* Edit Collection Modal */}
+      <EditCollectionModal
+        isOpen={!!editingCollection}
+        onClose={() => setEditingCollection(null)}
+        collection={editingCollection}
+      />
+
+      {/* Delete Collection Modal */}
+      <DeleteCollectionModal
+        isOpen={!!deletingCollection}
+        onClose={() => setDeletingCollection(null)}
+        collection={deletingCollection}
       />
     </>
   );
