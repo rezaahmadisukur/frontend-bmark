@@ -74,14 +74,11 @@ function NavItem({ label, icon, active, count, onClick }: NavItemProps) {
           : "text-sidebar-foreground/70 hover:bg-sidebar-accent/70 hover:text-sidebar-foreground hover:translate-x-0.5"
       )}
     >
-      {active && (
-        <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-sidebar-primary" />
-      )}
       <span
         className={cn(
           "shrink-0",
           active
-            ? "text-sidebar-primary"
+            ? "text-sidebar-primary-foreground"
             : "text-sidebar-foreground/50 group-hover:text-sidebar-foreground/80"
         )}
       >
