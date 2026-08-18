@@ -68,7 +68,7 @@ function NavItem({ label, icon, active, count, onClick }: NavItemProps) {
     <button
       onClick={onClick}
       className={cn(
-        "group relative flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150",
+        "group relative flex w-full items-center gap-2.5 rounded-full px-3 py-2.5 text-sm font-medium transition-all duration-150",
         active
           ? "bg-sidebar-primary/60 text-sidebar-primary-foreground"
           : "text-sidebar-foreground/70 hover:bg-sidebar-accent/70 hover:text-sidebar-foreground hover:translate-x-0.5"
@@ -128,15 +128,12 @@ function CollectionItem({
         })
       }
       className={cn(
-        "group relative flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm transition-all duration-150",
+        "group relative flex w-full items-center gap-2.5 rounded-full px-3 py-2.5 text-sm font-medium transition-all duration-150",
         isActive
           ? "bg-sidebar-primary/60 text-sidebar-primary-foreground"
           : "text-sidebar-foreground/70 hover:bg-sidebar-accent/70 hover:text-sidebar-foreground hover:translate-x-0.5"
       )}
     >
-      {isActive && (
-        <span className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-sidebar-primary" />
-      )}
       <span
         className="flex h-5 w-5 shrink-0 items-center justify-center rounded"
         style={{ color: collection.color }}
