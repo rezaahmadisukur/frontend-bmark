@@ -37,6 +37,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { fetchMetadata } from "../api/get-metadata";
+import { getErrorMessage, useToast } from "~/components/ui/toast";
 
 type BookmarkMetadata = {
   title?: string;
@@ -86,6 +87,7 @@ type FetchState = "idle" | "loading" | "success" | "error";
 
 const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
   const createBookmark = useCreateBookmark();
+  const { toast } = useToast();
   const { data: collections } = useGetCollections();
   const form = useForm<CreateBookmarkInput>({
     resolver: zodResolver(createBookmarkInputSchema)
@@ -134,10 +136,14 @@ const AddBookmarkModal = ({ isOpen, onClose }: AddBookmarkModalProps) => {
       { data },
       {
         onSuccess: () => {
+          toast("success", "Bookmark added");
           form.reset();
           setMetadata(null);
           setFetchState("idle");
           onClose();
+        },
+        onError: (err) => {
+          toast("error", getErrorMessage(err, "Failed to add bookmark"));
         }
       }
     );
