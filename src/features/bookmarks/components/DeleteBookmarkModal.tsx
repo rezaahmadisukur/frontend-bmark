@@ -14,6 +14,7 @@ import {
 import { AlertTriangle, Loader2 } from "lucide-react";
 import { Input } from "~/components/ui/input";
 import { Button } from "~/components/ui/button";
+import { getErrorMessage, useToast } from "~/components/ui/toast";
 
 type DeleteBookmarkModalProps = {
   isOpen: boolean;
@@ -27,6 +28,7 @@ const DeleteBookmarkModal = ({
   bookmark
 }: DeleteBookmarkModalProps) => {
   const deleteBookmark = useDeleteBookmark();
+  const { toast } = useToast();
   const [confirmText, setConfirmText] = useState("");
 
   const isConfirmMatch = confirmText.trim() === "Delete";
@@ -37,8 +39,12 @@ const DeleteBookmarkModal = ({
       { id: bookmark.id },
       {
         onSuccess: () => {
+          toast("success", "Bookmark deleted");
           setConfirmText("");
           onClose();
+        },
+        onError: (err) => {
+          toast("error", getErrorMessage(err, "Failed to delete bookmark"));
         }
       }
     );
