@@ -2,18 +2,21 @@
 
 import { Tag, X } from "lucide-react";
 import { Activity } from "./Activity";
-import { useApp } from "~/context/AppContext";
-import { ALL_TAGS } from "~/data/mockData";
 import { cn } from "~/lib/utils";
 import { useBookmarkFilters } from "~/features/bookmarks/hooks/use-bookmark-filters";
+import { useGetTags } from "~/features/tags/api/get-tags";
+import { useGetBookmarks } from "~/features/bookmarks/api/get-bookmarks";
 
 const TagFilter = () => {
-  const { bookmarks } = useApp();
+  const { data: tags } = useGetTags();
+  const { data: bookmarks } = useGetBookmarks();
   const { filters, setFilters } = useBookmarkFilters();
 
   // Count bookmark per tag
-  const tagCounts = ALL_TAGS.reduce<Record<string, number>>((acc, tag) => {
-    acc[tag] = bookmarks.filter((b) => b.tags.includes(tag)).length;
+  const tagCounts = (tags ?? []).reduce<Record<string, number>>((acc, tag) => {
+    acc[tag.name] =
+      bookmarks?.filter((b) => b.tags?.some((t) => t.tag.name === tag.name))
+        .length ?? 0;
     return acc;
   }, {});
 
@@ -39,13 +42,13 @@ const TagFilter = () => {
       </Activity>
 
       <div className="flex items-center gap-1.5">
-        {ALL_TAGS.map((tag) => {
-          const isActive = filters.tag === tag;
-          const count = tagCounts[tag] ?? 0;
+        {tags?.map((tag) => {
+          const isActive = filters.tag === tag.name;
+          const count = tagCounts[tag.name] ?? 0;
           return (
             <button
-              key={tag}
-              onClick={() => handleTag(tag)}
+              key={tag.id}
+              onClick={() => handleTag(tag.name)}
               className={cn(
                 "flex items-center shrink-0 gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium transition-all duration-150",
                 isActive
@@ -53,7 +56,7 @@ const TagFilter = () => {
                   : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground/80"
               )}
             >
-              <span>#{tag}</span>
+              <span>#{tag.name}</span>
               <span
                 className={cn(
                   "rounded px-1 text-[9px] tabular-nums",
