@@ -21,6 +21,7 @@ import { Collection } from "~/types/api";
 import { useBookmarkFilters } from "~/features/bookmarks/hooks/use-bookmark-filters";
 import { useGetBookmarks } from "~/features/bookmarks/api/get-bookmarks";
 import { useGetCollections } from "~/features/collections/api/get-collections";
+import { useGetProfile } from "~/features/auth/api/profile";
 import AddCollectionModal from "~/features/collections/components/AddCollectionModal";
 import EditCollectionModal from "~/features/collections/components/EditCollectionModal";
 import DeleteCollectionModal from "~/features/collections/components/DeleteCollectionModal";
@@ -184,6 +185,7 @@ const Sidebar = () => {
   const { filters, setFilters } = useBookmarkFilters();
   const { data: bookmarks } = useGetBookmarks();
   const { data: collections } = useGetCollections();
+  const { data: profile } = useGetProfile();
   const [isAddCollectionOpen, setIsAddCollectionOpen] = useState(false);
   const [editingCollection, setEditingCollection] = useState<Collection | null>(
     null
@@ -318,10 +320,10 @@ const Sidebar = () => {
             </div>
             <div>
               <p className="text-xs font-medium text-sidebar-foreground/80">
-                Dev User
+                {profile?.name ?? "B-Mark User"}
               </p>
               <p className="text-[10px] text-sidebar-foreground/50">
-                example@bmark.app
+                {profile?.email ?? "user@bmark.app"}
               </p>
             </div>
           </div>
