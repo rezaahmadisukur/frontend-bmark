@@ -21,6 +21,7 @@ import { Activity } from "~/components/partials/Activity";
 import { useEffect } from "react";
 import { cn } from "~/lib/utils";
 import { Collection } from "~/types/api";
+import { getErrorMessage, useToast } from "~/components/ui/toast";
 
 const PRESET_COLORS = [
   "#818cf8", // indigo
@@ -45,6 +46,7 @@ const EditCollectionModal = ({
   collection
 }: EditCollectionModalProps) => {
   const updateCollection = useUpdateCollection();
+  const { toast } = useToast();
 
   const form = useForm<UpdateCollectionInput>({
     resolver: zodResolver(updateCollectionInputSchema),
@@ -72,8 +74,12 @@ const EditCollectionModal = ({
       { id: collection.id, data },
       {
         onSuccess: () => {
+          toast("success", "Collection updated");
           form.reset();
           onClose();
+        },
+        onError: (err) => {
+          toast("error", getErrorMessage(err, "Failed to update collection"));
         }
       }
     );
