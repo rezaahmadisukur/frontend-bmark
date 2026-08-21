@@ -14,15 +14,24 @@ import { Loader2 } from "lucide-react";
 import { Activity } from "~/components/partials/Activity";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
+import { getErrorMessage, useToast } from "~/components/ui/toast";
 
 const LoginPage = () => {
   const loginMutation = useLogin();
+  const { toast } = useToast();
   const form = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema)
   });
 
   const onSubmit = (data: LoginFormData) => {
-    loginMutation.mutate({ data });
+    loginMutation.mutate(
+      { data },
+      {
+        onError: (err) => {
+          toast("error", getErrorMessage(err, "Login failed. Please try again"));
+        }
+      }
+    );
   };
 
   return (
