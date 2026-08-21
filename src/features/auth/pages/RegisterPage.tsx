@@ -14,15 +14,27 @@ import { Input } from "~/components/ui/input";
 import { Activity } from "~/components/partials/Activity";
 import { Button } from "~/components/ui/button";
 import Link from "next/link";
+import { getErrorMessage, useToast } from "~/components/ui/toast";
 
 const RegisterPage = () => {
   const registerMutation = useRegister();
+  const { toast } = useToast();
   const form = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema)
   });
 
   const onSubmit = (data: RegisterFormData) => {
-    registerMutation.mutate({ data });
+    registerMutation.mutate(
+      { data },
+      {
+        onError: (err) => {
+          toast(
+            "error",
+            getErrorMessage(err, "Registration failed. Please try again")
+          );
+        }
+      }
+    );
   };
   return (
     <div className="space-y-6">
