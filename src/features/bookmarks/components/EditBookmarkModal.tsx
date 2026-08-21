@@ -39,6 +39,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { fetchMetadata } from "../api/get-metadata";
 import { Bookmark } from "~/types/api";
+import { getErrorMessage, useToast } from "~/components/ui/toast";
 
 type BookmarkMetadata = {
   title?: string;
@@ -93,6 +94,7 @@ const EditBookmarkModal = ({
   bookmark
 }: EditBookmarkModalProps) => {
   const updateBookmark = useUpdateBookmark();
+  const { toast } = useToast();
   const { data: collections } = useGetCollections();
 
   // Fetch fresh bookmark data when modal opens
@@ -173,8 +175,12 @@ const EditBookmarkModal = ({
       },
       {
         onSuccess: () => {
+          toast("success", "Bookmark updated");
           form.reset();
           onClose();
+        },
+        onError: (err) => {
+          toast("error", getErrorMessage(err, "Failed to update bookmark"));
         }
       }
     );
