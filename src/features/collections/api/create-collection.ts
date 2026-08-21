@@ -19,7 +19,9 @@ export const createCollection = async ({
 }: {
   data: CreateCollectionInput;
 }): Promise<Collection> => {
-  const res = await axiosInstance.post<Collection>("/collections", data);
+  // Force name to lowercase so it's stored normalized; sidebar uppercases via CSS
+  const payload = { ...data, name: data.name.toLowerCase() };
+  const res = await axiosInstance.post<Collection>("/collections", payload);
   return res.data;
 };
 
