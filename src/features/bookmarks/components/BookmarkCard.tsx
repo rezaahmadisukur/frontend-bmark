@@ -19,6 +19,7 @@ import { Button } from "~/components/ui/button";
 import { Bookmark } from "~/types/api";
 import { useUpdateBookmark } from "../api/update-bookmark";
 import { useBookmarkFilters } from "../hooks/use-bookmark-filters";
+import { getErrorMessage, useToast } from "~/components/ui/toast";
 
 interface BookmarkCardProps {
   bookmark: Bookmark;
@@ -111,6 +112,7 @@ const BookmarkCard = ({
   onDeleteClick
 }: BookmarkCardProps) => {
   const updateBookmark = useUpdateBookmark();
+  const { toast } = useToast();
   const [copied, setCopied] = useState<boolean>(false);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
   const [timeAgo, setTimeAgo] = useState("");
@@ -127,12 +129,19 @@ const BookmarkCard = ({
   const handleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    updateBookmark.mutate({
-      id: bookmark.id,
-      data: {
-        isFavorite: !bookmark.isFavorite
+    updateBookmark.mutate(
+      {
+        id: bookmark.id,
+        data: {
+          isFavorite: !bookmark.isFavorite
+        }
+      },
+      {
+        onError: (err) => {
+          toast("error", getErrorMessage(err, "Failed to update favorite"));
+        }
       }
-    });
+    );
   };
 
   const handleEdit = (e: React.MouseEvent) => {
