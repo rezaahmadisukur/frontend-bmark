@@ -140,7 +140,9 @@ function CollectionItem({
       >
         <CollectionIcon name={collection.icon ?? "Layers"} />
       </span>
-      <span className="flex-1 truncate text-left">{collection.name}</span>
+      <span className="flex-1 truncate text-left uppercase">
+        {collection.name}
+      </span>
       <span
         className={cn(
           "ml-auto rounded-md px-1.5 py-0.5 text-xs tabular-nums",
@@ -155,7 +157,7 @@ function CollectionItem({
         <DropdownMenuTrigger asChild>
           <button
             onClick={(e) => e.stopPropagation()}
-            className="flex h-5 w-5 items-center justify-center rounded text-sidebar-foreground/40 opacity-0 group-hover:opacity-100 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-all"
+            className="flex h-5 w-5 items-center justify-center rounded-full text-sidebar-foreground/40 opacity-0 group-hover:opacity-100 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-all"
           >
             <MoreHorizontal size={12} />
           </button>
