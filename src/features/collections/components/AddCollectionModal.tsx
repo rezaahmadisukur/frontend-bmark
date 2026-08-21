@@ -19,6 +19,7 @@ import { Button } from "~/components/ui/button";
 import { Textarea } from "~/components/ui/textarea";
 import { Activity } from "~/components/partials/Activity";
 import { cn } from "~/lib/utils";
+import { getErrorMessage, useToast } from "~/components/ui/toast";
 
 const PRESET_COLORS = [
   "#818cf8", // indigo
@@ -38,6 +39,7 @@ type AddCollectionModalProps = {
 
 const AddCollectionModal = ({ isOpen, onClose }: AddCollectionModalProps) => {
   const createCollection = useCreateCollection();
+  const { toast } = useToast();
 
   const form = useForm<CreateCollectionInput>({
     resolver: zodResolver(createCollectionInputSchema),
@@ -53,8 +55,12 @@ const AddCollectionModal = ({ isOpen, onClose }: AddCollectionModalProps) => {
       { data },
       {
         onSuccess: () => {
+          toast("success", "Collection created");
           form.reset();
           onClose();
+        },
+        onError: (err) => {
+          toast("error", getErrorMessage(err, "Failed to create collection"));
         }
       }
     );
