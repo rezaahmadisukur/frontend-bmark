@@ -4,6 +4,7 @@ import { useDeleteCollection } from "../api/delete-collection";
 import { X, Trash2, Loader2 } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import { Collection } from "~/types/api";
+import { getErrorMessage, useToast } from "~/components/ui/toast";
 
 type DeleteCollectionModalProps = {
   isOpen: boolean;
@@ -17,6 +18,7 @@ const DeleteCollectionModal = ({
   collection
 }: DeleteCollectionModalProps) => {
   const deleteCollection = useDeleteCollection();
+  const { toast } = useToast();
 
   const handleDelete = () => {
     if (!collection) return;
@@ -24,7 +26,11 @@ const DeleteCollectionModal = ({
       { id: collection.id },
       {
         onSuccess: () => {
+          toast("success", "Collection deleted");
           onClose();
+        },
+        onError: (err) => {
+          toast("error", getErrorMessage(err, "Failed to delete collection"));
         }
       }
     );
