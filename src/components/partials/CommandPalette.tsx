@@ -14,7 +14,8 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Activity } from "./Activity";
 import { useApp } from "~/context/AppContext";
-import { ALL_TAGS } from "~/data/mockData";
+import { useGetBookmarks } from "~/features/bookmarks/api/get-bookmarks";
+import { useGetTags } from "~/features/tags/api/get-tags";
 import { cn } from "~/lib/utils";
 import type { Bookmark as BookmarkType } from "~/types/api";
 
@@ -27,10 +28,11 @@ const CommandPalette = () => {
   const {
     commandPaletteOpen,
     setCommandPaletteOpen,
-    bookmarks,
     setFilters,
     setAddModalOpen
   } = useApp();
+  const { data: bookmarks } = useGetBookmarks();
+  const { data: tags } = useGetTags();
   const [query, setQuery] = useState<string>("");
   const [selectedIdx, setSelectedIdx] = useState<number>(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -73,15 +75,16 @@ const CommandPalette = () => {
   // Compute result
   const results: ResultItem[] = (() => {
     const q = query.toLowerCase().trim();
+    const bm = bookmarks ?? [];
 
     if (!q) {
       // Show recent bookmark
-      return bookmarks
+      return bm
         .slice(0, 5)
         .map((b) => ({ type: "bookmark" as const, data: b }));
     }
 
-    const matchedBookmarks: ResultItem[] = bookmarks
+    const matchedBookmarks: ResultItem[] = bm
       .filter(
         (b) =>
           b.title.toLowerCase().includes(q) ||
@@ -92,9 +95,10 @@ const CommandPalette = () => {
       .slice(0, 5)
       .map((b) => ({ type: "bookmark" as const, data: b }));
 
-    const matchedTags: ResultItem[] = ALL_TAGS.filter((t) => t.includes(q))
+    const matchedTags: ResultItem[] = (tags ?? [])
+      .filter((t) => t.name.includes(q))
       .slice(0, 3)
-      .map((t) => ({ type: "tag" as const, data: t }));
+      .map((t) => ({ type: "tag" as const, data: t.name }));
 
     return [...matchedBookmarks, ...matchedTags];
   })();
