@@ -21,7 +21,9 @@ export const updateCollection = async ({
   id: string;
   data: UpdateCollectionInput;
 }): Promise<Collection> => {
-  const res = await axiosInstance.patch<Collection>(`/collections/${id}`, data);
+  // Normalize name to lowercase so it stays consistent across rename too
+  const payload = { ...data, name: data.name.toLowerCase() };
+  const res = await axiosInstance.patch<Collection>(`/collections/${id}`, payload);
   return res.data;
 };
 
