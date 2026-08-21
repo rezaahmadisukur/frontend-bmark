@@ -6,6 +6,7 @@ import { AppProvider } from "~/context/AppContext";
 import { QueryProvider } from "~/lib/query-provider";
 import { ThemeProvider } from "~/context/theme-provider";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Toaster } from "~/components/ui/toast";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -43,9 +44,11 @@ export default function RootLayout({
       <body>
         <ThemeProvider>
           <QueryProvider>
-            <AppProvider>
-              <NuqsAdapter>{children}</NuqsAdapter>
-            </AppProvider>
+            <Toaster>
+              <AppProvider>
+                <NuqsAdapter>{children}</NuqsAdapter>
+              </AppProvider>
+            </Toaster>
           </QueryProvider>
         </ThemeProvider>
       </body>
