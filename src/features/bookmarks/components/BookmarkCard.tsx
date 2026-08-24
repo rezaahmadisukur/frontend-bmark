@@ -17,9 +17,9 @@ import { Activity } from "../../../components/partials/Activity";
 import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import { Bookmark } from "~/types/api";
-import { useUpdateBookmark } from "../api/update-bookmark";
 import { useBookmarkFilters } from "../hooks/use-bookmark-filters";
 import { getErrorMessage, useToast } from "~/components/ui/toast";
+import { useToggleFavorite } from "../api/toggle-favorite";
 
 interface BookmarkCardProps {
   bookmark: Bookmark;
@@ -111,7 +111,7 @@ const BookmarkCard = ({
   onEditClick,
   onDeleteClick
 }: BookmarkCardProps) => {
-  const updateBookmark = useUpdateBookmark();
+  const toggleFavoriteMutation = useToggleFavorite();
   const { toast } = useToast();
   const [copied, setCopied] = useState<boolean>(false);
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
@@ -129,12 +129,9 @@ const BookmarkCard = ({
   const handleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    updateBookmark.mutate(
+    toggleFavoriteMutation.mutate(
       {
-        id: bookmark.id,
-        data: {
-          isFavorite: !bookmark.isFavorite
-        }
+        id: bookmark.id
       },
       {
         onError: (err) => {
