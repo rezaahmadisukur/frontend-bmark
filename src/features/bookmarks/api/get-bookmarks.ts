@@ -12,6 +12,7 @@ export enum BookmarkSortBy {
 type GetBookmarksInput = {
   sort?: BookmarkSortBy;
   limit?: number;
+  search?: string;
 };
 
 // For Query Fn
@@ -23,12 +24,15 @@ export const getBookmarks = async (input?: GetBookmarksInput) => {
 };
 
 // For Query Key
-export const getBookmarksQueryKey = () => ["bookmarks"];
+// Tanpa argumen → ["bookmarks"] (prefix untuk invalidate semua search).
+// Dengan search → ["bookmarks", { search }] supaya cache-nya unik per kata kunci.
+export const getBookmarksQueryKey = (search?: string) =>
+  search ? ["bookmarks", { search }] : ["bookmarks"];
 
 // Query Options
 export const getBookmarksQueryOptions = (input?: GetBookmarksInput) => {
   return queryOptions({
-    queryKey: getBookmarksQueryKey(),
+    queryKey: getBookmarksQueryKey(input?.search),
     queryFn: () => getBookmarks(input)
   });
 };
