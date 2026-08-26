@@ -6,15 +6,31 @@ import DeleteBookmarkModal from "./DeleteBookmarkModal";
 import EmptyState from "./EmptyState";
 import { Loader2 } from "lucide-react";
 import { useBookmarkFilters } from "../hooks/use-bookmark-filters";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Bookmark } from "~/types/api";
 import EditBookmarkModal from "./EditBookmarkModal";
 import { useApp } from "~/context/AppContext";
 
 const MainContent = () => {
-  const { data: bookmarks, isLoading, error } = useGetBookmarks();
   const { filters } = useBookmarkFilters();
   const { viewMode, sortMode } = useApp();
+
+  // Debounce search — baru kirim ke server setelah user berhenti mengetik 400ms
+  const [debouncedSearch, setDebouncedSearch] = useState(filters.search);
+  useEffect(() => {
+    const to = setTimeout(() => setDebouncedSearch(filters.search), 400);
+    return () => clearTimeout(to);
+  }, [filters.search]);
+
+  const {
+    data: bookmarks,
+    isLoading,
+    error
+  } = useGetBookmarks({
+    input: {
+      search: debouncedSearch || undefined
+    }
+  });
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [bookmarkToDelete, setBookmarkToDelete] = useState<Bookmark | null>(
     null
@@ -43,11 +59,7 @@ const MainContent = () => {
   };
 
   const filteredBookmarks = bookmarks?.filter((b) => {
-    if (
-      filters.search &&
-      !b.title.toLowerCase().includes(filters.search.toLowerCase())
-    )
-      return false;
+    // Search (client-side) dihapus — sekarang di-handle server via ?search=
     if (filters.tag && !b.tags?.some((t) => t.tag.name === filters.tag))
       return false;
     if (filters.collectionId && b.collectionId !== filters.collectionId)
@@ -64,10 +76,14 @@ const MainContent = () => {
   const sortedBookmarks = filteredBookmarks
     ? [...filteredBookmarks].sort((a, b) => {
         if (sortMode === "oldest")
-          return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+          return (
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
         if (sortMode === "az") return a.title.localeCompare(b.title);
         // default: newest
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
       })
     : undefined;
 
@@ -88,18 +104,17 @@ const MainContent = () => {
   }
 
   if (!sortedBookmarks || sortedBookmarks.length === 0) {
-    const emptyType =
-      filters.search
-        ? "search"
-        : filters.showFavorites
-          ? "favorites"
-          : filters.showRecent
-            ? "recent"
-            : filters.collectionId
-              ? "collection"
-              : filters.tag
-                ? "tag"
-                : "all";
+    const emptyType = filters.search
+      ? "search"
+      : filters.showFavorites
+        ? "favorites"
+        : filters.showRecent
+          ? "recent"
+          : filters.collectionId
+            ? "collection"
+            : filters.tag
+              ? "tag"
+              : "all";
     return (
       <div className="flex flex-1 items-center justify-center p-5">
         <EmptyState type={emptyType} />
