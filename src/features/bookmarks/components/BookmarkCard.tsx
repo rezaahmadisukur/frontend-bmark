@@ -415,14 +415,20 @@ const BookmarkCard = ({
               )}
             </div>
 
-            <Button asChild size="sm" variant="outline" className="mt-3 w-full">
+            <Button
+              asChild
+              size="sm"
+              variant="outline"
+              className="mt-3 w-full rounded-full"
+            >
               <Link
                 href={bookmark.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
+                className="text-xs"
               >
-                <ExternalLink size={14} />
+                <ExternalLink size={10} />
                 Visit Link
               </Link>
             </Button>
