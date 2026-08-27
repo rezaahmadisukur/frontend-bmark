@@ -128,20 +128,26 @@ const Topbar = () => {
           <Menu size={16} />
         </button>
 
-        {/* Search bar */}
-        <button
-          onClick={() => setCommandPaletteOpen(true)}
-          className="group flex flex-1 items-center gap-2.5 rounded-xl border border-border bg-muted/50 px-3.5 py-2 text-sm text-muted-foreground transition-all hover:border-border/80 hover:bg-muted/80 hover:text-foreground/80"
-        >
+        {/* Search input (server-side, debounced) */}
+        <div className="group flex flex-1 items-center gap-2.5 rounded-xl border border-border bg-muted/50 px-3.5 py-2 text-sm text-muted-foreground transition-all hover:border-border/80 focus-within:border-primary/50 focus-within:bg-muted/80">
           <Search size={14} className="shrink-0" />
-          <span className="flex-1 text-left text-sm">
-            {filters.search || "Search bookmarks..."}
-          </span>
-          <div className="flex items-center gap-0.5 rounded-md border border-border bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground/80">
+          <input
+            type="text"
+            defaultValue={filters.search}
+            onChange={(e) => setFilters({ search: e.target.value })}
+            placeholder="Search bookmarks..."
+            className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
+          />
+          <button
+            type="button"
+            onClick={() => setCommandPaletteOpen(true)}
+            title="Open command palette (Ctrl+K)"
+            className="flex shrink-0 cursor-pointer items-center gap-0.5 rounded-md border border-border bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground/80 transition-colors hover:bg-muted/80 hover:text-foreground"
+          >
             <Command size={10} />
             <span>K</span>
-          </div>
-        </button>
+          </button>
+        </div>
 
         {/* View toggle */}
         <div className="hidden items-center rounded-lg border border-border bg-muted p-1 sm:flex">
