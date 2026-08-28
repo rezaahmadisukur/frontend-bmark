@@ -112,7 +112,8 @@ function CollectionItem({
   onDelete: (collection: Collection) => void;
 }) {
   const { filters, setFilters } = useBookmarkFilters();
-  const { data: bookmarks } = useGetBookmarks();
+  const { data } = useGetBookmarks();
+  const bookmarks = Array.isArray(data) ? data : data?.data;
   const isActive = filters.collectionId === collection.id;
   const count =
     bookmarks?.filter((b) => b.collectionId === collection.id).length ?? 0;
@@ -183,7 +184,8 @@ function CollectionItem({
 const Sidebar = () => {
   const { sidebarOpen, setSidebarOpen } = useApp();
   const { filters, setFilters } = useBookmarkFilters();
-  const { data: bookmarks } = useGetBookmarks();
+  const { data } = useGetBookmarks();
+  const bookmarks = Array.isArray(data) ? data : data?.data;
   const { data: collections } = useGetCollections();
   const { data: profile } = useGetProfile();
   const [isAddCollectionOpen, setIsAddCollectionOpen] = useState(false);
