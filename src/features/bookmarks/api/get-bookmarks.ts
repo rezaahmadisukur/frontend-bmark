@@ -3,17 +3,28 @@ import type { QueryConfig } from "~/lib/react-query";
 import { axiosInstance } from "~/lib/axios";
 import { Bookmark } from "~/types/api";
 
-type GetBookmarksResponse = Bookmark[];
-
 export enum BookmarkSortBy {
   RECOMMENDED = "recommended"
 }
 
 type GetBookmarksInput = {
-  sort?: BookmarkSortBy;
+  sort?: "newest" | "oldest" | "az";
   limit?: number;
   search?: string;
+  page?: number;
 };
+
+type PaginatedResponse = {
+  data: Bookmark[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+};
+
+type GetBookmarksResponse = Bookmark[] | PaginatedResponse;
 
 // For Query Fn
 export const getBookmarks = async (input?: GetBookmarksInput) => {
@@ -24,15 +35,27 @@ export const getBookmarks = async (input?: GetBookmarksInput) => {
 };
 
 // For Query Key
-// Tanpa argumen → ["bookmarks"] (prefix untuk invalidate semua search).
-// Dengan search → ["bookmarks", { search }] supaya cache-nya unik per kata kunci.
-export const getBookmarksQueryKey = (search?: string) =>
-  search ? ["bookmarks", { search }] : ["bookmarks"];
+// - Tanpa pagination → ["bookmarks"] (prefix yang dipakai mutation utk invalidate semua varian)
+// - Dengan pagination → ["bookmarks", { search, page, limit, sort }] (cache unik per varian)
+export const getBookmarksQueryKey = (input?: GetBookmarksInput) => {
+  if (input?.page !== undefined || input?.limit !== undefined) {
+    return [
+      "bookmarks",
+      {
+        search: input.search ?? "",
+        page: input.page ?? 1,
+        limit: input.limit ?? 12,
+        sort: input.sort ?? "newest"
+      }
+    ];
+  }
+  return ["bookmarks"];
+};
 
 // Query Options
 export const getBookmarksQueryOptions = (input?: GetBookmarksInput) => {
   return queryOptions({
-    queryKey: getBookmarksQueryKey(input?.search),
+    queryKey: getBookmarksQueryKey(input),
     queryFn: () => getBookmarks(input)
   });
 };
