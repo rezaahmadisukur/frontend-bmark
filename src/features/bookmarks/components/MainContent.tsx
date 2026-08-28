@@ -10,6 +10,9 @@ import { useEffect, useState } from "react";
 import { Bookmark } from "~/types/api";
 import EditBookmarkModal from "./EditBookmarkModal";
 import { useApp } from "~/context/AppContext";
+import { Button } from "~/components/ui/button";
+
+const PAGE_SIZE = 12;
 
 const MainContent = () => {
   const { filters } = useBookmarkFilters();
@@ -22,15 +25,52 @@ const MainContent = () => {
     return () => clearTimeout(to);
   }, [filters.search]);
 
+  // Pagination: jumlah item yang dimuat (naik bertahap via "Load more")
+  const [limit, setLimit] = useState(PAGE_SIZE);
+
+  // Reset limit saat search/sort/filter berubah (biar mulai dari awal).
+  // Dipakai pola "adjusting state during render" (bukan useEffect) — reset hanya
+  // saat signature berubah, supaya tombol "Load more" tetap bekerja tanpa trigger
+  // setState di dalam effect.
+  const resetKey = [
+    debouncedSearch,
+    sortMode,
+    filters.tag,
+    filters.collectionId,
+    filters.showFavorites,
+    filters.showRecent
+  ].join("|");
+  const [prevResetKey, setPrevResetKey] = useState(resetKey);
+  if (prevResetKey !== resetKey) {
+    setPrevResetKey(resetKey);
+    setLimit(PAGE_SIZE);
+  }
+
   const {
-    data: bookmarks,
+    data,
     isLoading,
     error
   } = useGetBookmarks({
     input: {
-      search: debouncedSearch || undefined
+      search: debouncedSearch || undefined,
+      sort: sortMode,
+      page: 1,
+      limit
     }
   });
+
+  // Normalisasi: backend bisa return array penuh (tanpa page) atau { data, meta } (paginated)
+  const paginated = !Array.isArray(data);
+  const bookmarks = Array.isArray(data) ? data : data?.data;
+  const total = paginated
+    ? (
+        data as {
+          meta?: { total: number };
+        }
+      )?.meta?.total ?? 0
+    : bookmarks?.length ?? 0;
+  const hasMore = (bookmarks?.length ?? 0) < total;
+
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [bookmarkToDelete, setBookmarkToDelete] = useState<Bookmark | null>(
     null
@@ -58,9 +98,9 @@ const MainContent = () => {
     setBookmarkToEdit(null);
   };
 
+  // Filter client-side: tag, collection, favorites, recent (search sudah di server)
   const filteredBookmarks = bookmarks?.filter((b) => {
-    // Search (client-side) dihapus — sekarang di-handle server via ?search=
-    if (filters.tag && !b.tags?.some((t) => t.tag.name === filters.tag))
+    if (filters.tag && !b.tags?.some((t: { tag: { name: string } }) => t.tag.name === filters.tag))
       return false;
     if (filters.collectionId && b.collectionId !== filters.collectionId)
       return false;
@@ -73,19 +113,8 @@ const MainContent = () => {
     return true;
   });
 
-  const sortedBookmarks = filteredBookmarks
-    ? [...filteredBookmarks].sort((a, b) => {
-        if (sortMode === "oldest")
-          return (
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-          );
-        if (sortMode === "az") return a.title.localeCompare(b.title);
-        // default: newest
-        return (
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-      })
-    : undefined;
+  // Sort sudah di server (backend orderBy). Tanpa transformation tambahan.
+  const sortedBookmarks = filteredBookmarks;
 
   if (isLoading) {
     return (
@@ -141,6 +170,19 @@ const MainContent = () => {
           />
         ))}
       </div>
+
+      {/* Load more */}
+      {hasMore && (
+        <div className="flex justify-center px-5 pb-6">
+          <Button
+            variant="outline"
+            onClick={() => setLimit((l) => l + PAGE_SIZE)}
+            className="cursor-pointer"
+          >
+            Load more
+          </Button>
+        </div>
+      )}
 
       <EditBookmarkModal
         isOpen={isEditModalOpen}
