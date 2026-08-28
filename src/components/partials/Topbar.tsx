@@ -95,7 +95,8 @@ const Topbar = () => {
     setViewMode
   } = useApp();
   const { filters, setFilters } = useBookmarkFilters();
-  const { data: bookmarks } = useGetBookmarks();
+  const { data } = useGetBookmarks();
+  const bookmarks = Array.isArray(data) ? data : data?.data;
 
   const filteredCount =
     bookmarks?.filter((b) => {
@@ -104,7 +105,7 @@ const Topbar = () => {
         !b.title.toLowerCase().includes(filters.search.toLowerCase())
       )
         return false;
-      if (filters.tag && !b.tags?.some((t) => t.tag.name === filters.tag))
+      if (filters.tag && !b.tags?.some((t: { tag: { name: string } }) => t.tag.name === filters.tag))
         return false;
       if (filters.collectionId && b.collectionId !== filters.collectionId)
         return false;
