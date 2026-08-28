@@ -35,7 +35,8 @@ function CollectionIcon({ name, color }: { name: string; color: string }) {
 
 const PageHeader = () => {
   const { filters } = useBookmarkFilters();
-  const { data: bookmarks } = useGetBookmarks();
+  const { data } = useGetBookmarks();
+  const bookmarks = Array.isArray(data) ? data : data?.data;
   const { data: collections } = useGetCollections();
 
   const getTitle = () => {
