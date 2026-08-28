@@ -31,7 +31,8 @@ const CommandPalette = () => {
     setFilters,
     setAddModalOpen
   } = useApp();
-  const { data: bookmarks } = useGetBookmarks();
+  const { data } = useGetBookmarks();
+  const bookmarks = Array.isArray(data) ? data : data?.data;
   const { data: tags } = useGetTags();
   const [query, setQuery] = useState<string>("");
   const [selectedIdx, setSelectedIdx] = useState<number>(0);
@@ -89,7 +90,7 @@ const CommandPalette = () => {
         (b) =>
           b.title.toLowerCase().includes(q) ||
           b.description.toLowerCase().includes(q) ||
-          b.tags?.some((t) => t.tag.name.toLowerCase().includes(q)) ||
+          b.tags?.some((t: { tag: { name: string } }) => t.tag.name.toLowerCase().includes(q)) ||
           b.url.includes(q)
       )
       .slice(0, 5)
