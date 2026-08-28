@@ -9,13 +9,14 @@ import { useGetBookmarks } from "~/features/bookmarks/api/get-bookmarks";
 
 const TagFilter = () => {
   const { data: tags } = useGetTags();
-  const { data: bookmarks } = useGetBookmarks();
+  const { data } = useGetBookmarks();
+  const bookmarks = Array.isArray(data) ? data : data?.data;
   const { filters, setFilters } = useBookmarkFilters();
 
   // Count bookmark per tag
   const tagCounts = (tags ?? []).reduce<Record<string, number>>((acc, tag) => {
     acc[tag.name] =
-      bookmarks?.filter((b) => b.tags?.some((t) => t.tag.name === tag.name))
+      bookmarks?.filter((b) => b.tags?.some((t: { tag: { name: string } }) => t.tag.name === tag.name))
         .length ?? 0;
     return acc;
   }, {});
