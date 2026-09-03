@@ -63,7 +63,11 @@ const MainContent = () => {
       search: debouncedSearch || undefined,
       sort: sortMode,
       page,
-      limit: PAGE_SIZE
+      limit: PAGE_SIZE,
+      tag: filters.tag || undefined,
+      collectionId: filters.collectionId || undefined,
+      favorites: filters.showFavorites || undefined,
+      recent: filters.showRecent || undefined
     }
   });
 
@@ -105,23 +109,9 @@ const MainContent = () => {
     setBookmarkToEdit(null);
   };
 
-  // Filter client-side: tag, collection, favorites, recent (search sudah di server)
-  const filteredBookmarks = bookmarks?.filter((b) => {
-    if (filters.tag && !b.tags?.some((t: { tag: { name: string } }) => t.tag.name === filters.tag))
-      return false;
-    if (filters.collectionId && b.collectionId !== filters.collectionId)
-      return false;
-    if (filters.showFavorites && !b.isFavorite) return false;
-    if (filters.showRecent) {
-      const weekAgo = new Date();
-      weekAgo.setDate(weekAgo.getDate() - 7);
-      if (new Date(b.createdAt) < weekAgo) return false;
-    }
-    return true;
-  });
-
-  // Sort sudah di server (backend orderBy). Tanpa transformation tambahan.
-  const sortedBookmarks = filteredBookmarks;
+  // Filter (tag/collection/favorites/recent) & search & sort semua di-handle
+  // server via query params — data yang diterima sudah final.
+  const sortedBookmarks = bookmarks;
 
   // Halaman yang ditampilkan di pagination: window + ellipsis
   const pagesToShow: (number | "...")[] = (() => {
