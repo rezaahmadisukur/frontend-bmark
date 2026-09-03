@@ -12,6 +12,10 @@ type GetBookmarksInput = {
   limit?: number;
   search?: string;
   page?: number;
+  tag?: string;
+  collectionId?: string;
+  favorites?: boolean;
+  recent?: boolean;
 };
 
 type PaginatedResponse = {
@@ -45,7 +49,11 @@ export const getBookmarksQueryKey = (input?: GetBookmarksInput) => {
         search: input.search ?? "",
         page: input.page ?? 1,
         limit: input.limit ?? 12,
-        sort: input.sort ?? "newest"
+        sort: input.sort ?? "newest",
+        tag: input.tag ?? "",
+        collectionId: input.collectionId ?? "",
+        favorites: input.favorites ?? false,
+        recent: input.recent ?? false
       }
     ];
   }
