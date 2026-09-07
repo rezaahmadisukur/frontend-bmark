@@ -4,7 +4,6 @@ import { useGetBookmarks } from "~/features/bookmarks/api/get-bookmarks";
 import BookmarkCard from "./BookmarkCard";
 import DeleteBookmarkModal from "./DeleteBookmarkModal";
 import EmptyState from "./EmptyState";
-import { Loader2 } from "lucide-react";
 import { useBookmarkFilters } from "../hooks/use-bookmark-filters";
 import { useEffect, useState } from "react";
 import { Bookmark } from "~/types/api";
@@ -132,10 +131,33 @@ const MainContent = () => {
     return pages;
   })();
 
-  if (isLoading) {
+  const gridClass =
+    viewMode === "list"
+      ? "flex flex-col gap-3 p-5"
+      : "grid grid-cols-1 gap-4 p-5 sm:grid-cols-2 xl:grid-cols-3";
+
+  if (isLoading && !bookmarks) {
     return (
-      <div className="flex items-center justify-center p-10">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      <div className={gridClass}>
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div
+            key={i}
+            className="relative overflow-hidden rounded-2xl border border-border bg-card p-4"
+          >
+            <div className="relative h-32 w-full overflow-hidden rounded-lg bg-muted">
+              <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-linear-to-r from-transparent via-muted-foreground/15 to-transparent" />
+            </div>
+            <div className="relative mt-3 h-4 w-2/3 overflow-hidden rounded-md bg-muted">
+              <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-linear-to-r from-transparent via-muted-foreground/15 to-transparent" />
+            </div>
+            <div className="relative mt-2 h-3 w-full overflow-hidden rounded-md bg-muted">
+              <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-linear-to-r from-transparent via-muted-foreground/15 to-transparent" />
+            </div>
+            <div className="relative mt-2 h-3 w-5/6 overflow-hidden rounded-md bg-muted">
+              <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-linear-to-r from-transparent via-muted-foreground/15 to-transparent" />
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
