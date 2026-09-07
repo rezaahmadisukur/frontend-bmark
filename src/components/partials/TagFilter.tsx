@@ -43,34 +43,45 @@ const TagFilter = () => {
       </Activity>
 
       <div className="flex items-center gap-1.5">
-        {tags?.map((tag) => {
-          const isActive = filters.tag === tag.name;
-          const count = tagCounts[tag.name] ?? 0;
-          return (
-            <button
-              key={tag.id}
-              onClick={() => handleTag(tag.name)}
-              className={cn(
-                "flex items-center shrink-0 gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium transition-all duration-150",
-                isActive
-                  ? "bg-primary/30 text-primary/80 ring-1 ring-primary/50"
-                  : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground/80"
-              )}
-            >
-              <span>#{tag.name}</span>
-              <span
+        {tags === undefined ? (
+          <>
+            {[...Array(5)].map((_, i) => (
+              <div
+                key={i}
+                className="h-6 w-14 animate-pulse rounded-full bg-muted"
+              />
+            ))}
+          </>
+        ) : (
+          tags.map((tag) => {
+            const isActive = filters.tag === tag.name;
+            const count = tagCounts[tag.name] ?? 0;
+            return (
+              <button
+                key={tag.id}
+                onClick={() => handleTag(tag.name)}
                 className={cn(
-                  "rounded px-1 text-[9px] tabular-nums",
+                  "flex items-center shrink-0 gap-1 rounded-full px-2.5 py-1 text-[11px] font-medium transition-all duration-150",
                   isActive
-                    ? "bg-primary/20 text-primary"
-                    : "bg-muted text-muted-foreground"
+                    ? "bg-primary/30 text-primary/80 ring-1 ring-primary/50"
+                    : "bg-muted text-muted-foreground hover:bg-muted/80 hover:text-foreground/80"
                 )}
               >
-                {count}
-              </span>
-            </button>
-          );
-        })}
+                <span>#{tag.name}</span>
+                <span
+                  className={cn(
+                    "rounded px-1 text-[9px] tabular-nums",
+                    isActive
+                      ? "bg-primary/20 text-primary"
+                      : "bg-muted text-muted-foreground"
+                  )}
+                >
+                  {count}
+                </span>
+              </button>
+            );
+          })
+        )}
       </div>
     </div>
   );
