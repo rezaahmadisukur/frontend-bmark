@@ -302,14 +302,25 @@ const Sidebar = () => {
               </button>
             </div>
             <div className="flex flex-col gap-0.5">
-              {collections?.map((c) => (
-                <CollectionItem
-                  key={c.id}
-                  collection={c}
-                  onEdit={(col) => setEditingCollection(col)}
-                  onDelete={(col) => setDeletingCollection(col)}
-                />
-              ))}
+              {collections === undefined ? (
+                <>
+                  {[...Array(4)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-7 animate-pulse rounded-lg bg-sidebar-accent/50"
+                    />
+                  ))}
+                </>
+              ) : (
+                collections.map((c) => (
+                  <CollectionItem
+                    key={c.id}
+                    collection={c}
+                    onEdit={(col) => setEditingCollection(col)}
+                    onDelete={(col) => setDeletingCollection(col)}
+                  />
+                ))
+              )}
             </div>
           </div>
         </nav>
