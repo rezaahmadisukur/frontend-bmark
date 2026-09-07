@@ -145,3 +145,13 @@
     transform: translateY(0);
   }
 }
+
+/* Skeleton shimmer animation */
+@keyframes shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
