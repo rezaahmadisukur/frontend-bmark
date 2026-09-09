@@ -139,7 +139,7 @@ const MainContent = () => {
   if (isLoading && !bookmarks) {
     return (
       <div className={gridClass}>
-        {Array.from({ length: 6 }).map((_, i) => (
+        {Array.from({ length: PAGE_SIZE }).map((_, i) => (
           <div
             key={i}
             className="relative overflow-hidden rounded-2xl border border-border bg-card p-4"
