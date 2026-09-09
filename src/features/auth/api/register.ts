@@ -37,6 +37,7 @@ export const useRegister = ({ mutationConfig }: UseRegister = {}) => {
       const data = args[0] as Authentication;
 
       localStorage.setItem("token", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
       localStorage.setItem("user", JSON.stringify(data.user));
 
       qc.setQueryData(["auth", "profile"], data.user);
