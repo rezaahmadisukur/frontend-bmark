@@ -37,6 +37,7 @@ export const useLogin = ({ mutationConfig }: UseLogin = {}) => {
       const data = args[0] as Authentication;
       // Simpan token & user ke localStorage
       localStorage.setItem("token", data.accessToken);
+      localStorage.setItem("refreshToken", data.refreshToken);
       localStorage.setItem("user", JSON.stringify(data.user));
 
       // Set data profile di cache React Query
