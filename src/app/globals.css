@@ -155,3 +155,25 @@
     transform: translateX(100%);
   }
 }
+
+/* Animated gradient text (headline) */
+@theme {
+  --animate-gradient-x: gradient-x 6s linear infinite;
+
+  @keyframes gradient-x {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+}
+
+/* Smooth anchor scrolling, respects reduced motion */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
